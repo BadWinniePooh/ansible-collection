@@ -184,7 +184,105 @@ Apply a role in a playbook:
 
 ---
 
-## 9. ansible.cfg
+## 9. Templates
+
+Templates use Jinja2 to generate dynamic config files from variables.
+
+**Template file (`motd.j2`):**
+```
+# Managed by Ansible — do not edit manually
+Welcome to {{ inventory_hostname }}
+Server group: {{ group_names | join(', ') }}
+```
+
+**Deploy to a managed node (requires SSH):**
+```yaml
+- name: Write motd
+  ansible.builtin.template:
+    src: motd.j2
+    dest: /etc/motd
+```
+
+**Preview locally without SSH (control node only):**
+```yaml
+- name: Preview template
+  ansible.builtin.debug:
+    msg: "{{ lookup('template', 'motd.j2') }}"
+```
+
+| Method | Renders on | Writes to target | SSH needed |
+|---|---|---|---|
+| `lookup('template', ...)` | control node | no | no |
+| `ansible.builtin.template` | control node | yes | yes |
+
+- `group_names` — built-in list of all groups the current host belongs to
+- `| join(', ')` — Jinja2 filter to turn a list into a string
+- Template files live in `roles/<name>/templates/` and use the `.j2` extension
+
+---
+
+## 10. Tags
+
+Tags let you run a subset of tasks without changing the playbook.
+
+```yaml
+- name: Install packages
+  ansible.builtin.debug:
+    msg: "Installing packages"
+  tags: [packages, setup]
+
+- name: Apply config
+  ansible.builtin.debug:
+    msg: "Applying config"
+  tags: [config]
+```
+
+| CLI | Effect |
+|---|---|
+| `--tags packages` | run only tasks tagged `packages` |
+| `--tags packages,config` | run tasks tagged either |
+| `--skip-tags config` | run everything except `config` tagged tasks |
+
+Tags can also be applied to an entire role:
+```yaml
+roles:
+  - role: common
+    tags: [common]
+```
+
+---
+
+## 11. Ansible Vault
+
+Encrypts sensitive values so secrets can be safely committed to Git.
+
+**Common commands:**
+```zsh
+ansible-vault create secrets.yml       # create new encrypted file
+ansible-vault edit secrets.yml         # edit existing encrypted file
+ansible-vault view secrets.yml         # view without editing
+```
+
+**Best practice — `vault_` prefix convention:**
+```
+group_vars/all/
+  vault.yml   ← encrypted, contains: vault_db_password: "secret"
+  vars.yml    ← plain,     contains: db_password: "{{ vault_db_password }}"
+```
+Playbooks reference `db_password` — never the raw `vault_` variable directly.
+
+**Run with vault decryption:**
+```zsh
+ansible-playbook playbooks/site.yml --ask-vault-pass
+ansible-playbook playbooks/site.yml --vault-password-file ~/.vault_pass
+```
+
+- Variables are loaded for all hosts on every run — they only appear in output if a task explicitly references them
+- The encrypted blob in `vault.yml` is safe to commit to Git
+
+---
+
+## 12. ansible.cfg
 
 Project-level configuration file placed at the **project root**. Ansible loads it automatically when running commands from that directory.
 
@@ -202,7 +300,7 @@ export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.
 
 ---
 
-## 10. Useful Commands
+## 13. Useful Commands
 
 | Command | Purpose |
 |---|---|
@@ -214,7 +312,7 @@ export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.
 
 ---
 
-## 11. Project Layout (so far)
+## 14. Project Layout (so far)
 
 ```
 ansible/
@@ -226,7 +324,9 @@ ansible/
 │   └── dev/
 │       ├── hosts.ini
 │       └── group_vars/
-│           ├── all.yml
+│           ├── all/
+│           │   ├── vars.yml
+│           │   └── vault.yml  ← AES256 encrypted
 │           └── webservers.yml
 ├── playbooks/
 │   ├── hello.yml
@@ -235,15 +335,17 @@ ansible/
 │   └── site.yml
 └── roles/
     └── common/
-        └── tasks/
-            └── main.yml
+        ├── tasks/
+        │   └── main.yml
+        └── templates/
+            └── motd.j2
 ```
 
 ---
 
-## 12. Next Topics
+## 15. Next Topics
 
-- Templates (`template:` module, Jinja2 `.j2` files)
-- Tags (`--tags`, `--skip-tags`)
-- Real SSH targets (Hetzner Cloud)
-- Ansible Vault (encrypting secrets)
+- Real Hetzner Cloud VMs (SSH connectivity, `ansible -m ping`)
+- `ansible.builtin.apt` for package management
+- `ansible.builtin.service` for service management
+- A real server hardening playbook
