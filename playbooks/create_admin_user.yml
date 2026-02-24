@@ -1,0 +1,59 @@
+---
+- name: Create non-root admin user
+  hosts: webservers
+  remote_user: root
+  gather_facts: true
+
+  # Bootstraps a non-root admin user (admin_user, default: deploy).
+  # Must run as root once. After completion the inventory is updated
+  # so all future playbooks connect as the new user.
+
+  tasks:
+    - name: Create {{ admin_user }} user
+      ansible.builtin.user:
+        name: "{{ admin_user }}"
+        password: "{{ admin_password | password_hash('sha512') }}"
+        shell: /bin/bash
+        groups: sudo
+        append: true
+        create_home: true
+        state: present
+
+    - name: Create .ssh directory for {{ admin_user }}
+      ansible.builtin.file:
+        path: "/home/{{ admin_user }}/.ssh"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0700"
+
+    - name: Copy SSH authorized key for {{ admin_user }}
+      ansible.builtin.copy:
+        dest: "/home/{{ admin_user }}/.ssh/authorized_keys"
+        content: "{{ lookup('file', '~/.ssh/hetzner_ansible.pub') }}\n"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0600"
+
+    - name: Grant sudo with password to {{ admin_user }}
+      ansible.builtin.copy:
+        content: "{{ admin_user }} ALL=(ALL) ALL\n"
+        dest: "/etc/sudoers.d/{{ admin_user }}"
+        owner: root
+        group: root
+        mode: "0440"
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Update default ansible_user in hosts.ini
+      ansible.builtin.lineinfile:
+        path: "{{ playbook_dir }}/../inventories/dev/hosts.ini"
+        regexp: '^ansible_user='
+        line: "ansible_user={{ admin_user }}"
+      delegate_to: localhost
+
+    - name: Update {{ inventory_hostname }} host entry to use {{ admin_user }}
+      ansible.builtin.lineinfile:
+        path: "{{ playbook_dir }}/../inventories/dev/hosts.ini"
+        regexp: '^{{ inventory_hostname }} ansible_host=.*'
+        line: "{{ inventory_hostname }} ansible_host={{ hostvars[inventory_hostname]['ansible_host'] }} ansible_user={{ admin_user }}"
+      delegate_to: localhost
