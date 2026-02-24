@@ -6,14 +6,14 @@
 
 ## Session State
 
-Iteration 14 complete. `manage_packages.yml` installs vim, curl, htop, tree on `mount-doom` using `ansible.builtin.apt`.
-Ready for iteration 15: service management with `ansible.builtin.service`.
+Iteration 15 complete. `mount-doom` reachable over RDP with xfce4 desktop via xrdp.
+Ready for iteration 16: real template deploy with `ansible.builtin.template`.
 
 ## Immediate Next Step
 
-**Iteration 15 — Service management (`ansible.builtin.service`)**
+**Iteration 16 — Real template deploy (`ansible.builtin.template`)**
 
-Manage services on `mount-doom` using `ansible.builtin.service`.
+Render a Jinja2 template with facts/variables and deploy it to `mount-doom` using `ansible.builtin.template`.
 
 ## Open Items / Decisions Pending
 

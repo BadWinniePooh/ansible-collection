@@ -33,7 +33,13 @@
 - `lineinfile` module for idempotently updating a line in a file by regexp
 - `playbook_dir` built-in variable: directory of the currently running playbook
 - Hetzner server names must be valid hostnames — no underscores
-- `hetzner.hcloud.server_info` captures server IP before deletion for downstream tasks
+- `ansible.builtin.service` `state: started` + `enabled: true` starts and enables a service on boot
+- `state: absent` with `apt` removes packages — used to eliminate conflicting services
+- `gnome-remote-desktop` must be removed on Ubuntu 24.04 before xrdp works
+- `light-locker` must be removed to prevent black screen over RDP in xfce4
+- `xfce4-session` is the correct session command for RDP (not `startxfce4`)
+- `passlib` must be injected via `pipx inject ansible-core passlib` for `password_hash` filter
+- Handlers fire once at end of play, regardless of how many tasks notify them
 - `ansible.builtin.known_hosts` with `state: absent` is idempotent — no error if entry doesn't exist
 - Ansible auto-adds hosts to `known_hosts` on first connection (e.g. via `ping` module)
 - `ansible.builtin.apt` `state: present` is idempotent — reports `ok` if package already installed
@@ -44,7 +50,7 @@
 
 | # | Topic | Notes |
 |---|---|---|
-| 15 | `ansible.builtin.service` | Service management |
+| 15 | Remote desktop (XRDP) | `playbooks/setup_remote_desktop.yml` | done |
 | 16 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
 | 17 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
 | 18 | Dynamic inventory | Hetzner Cloud plugin |
