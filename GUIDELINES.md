@@ -74,3 +74,4 @@ Topics build on each other in the following order:
   ```
 - Commits are made to `main` during early learning; feature branches will be introduced when the topic is relevant
 - **You are responsible for `git push`** — I will only stage and commit locally
+- Git commands are always run directly in the active terminal session — never via `wsl --` invocation
