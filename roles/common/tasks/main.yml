@@ -2,7 +2,9 @@
 - name: Common role task
   ansible.builtin.debug:
     msg: "Running common role on {{ inventory_hostname }}"
+  tags: [common, info]
 
 - name: Preview rendered motd template (local render, no SSH needed)
   ansible.builtin.debug:
     msg: "{{ lookup('template', 'motd.j2') }}"
+  tags: [common, template]
