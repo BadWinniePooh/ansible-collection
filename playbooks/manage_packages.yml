@@ -1,0 +1,19 @@
+---
+- name: Manage packages on webservers
+  hosts: webservers
+  gather_facts: true
+
+  tasks:
+    - name: Update apt cache (if older than 1 hour)
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name:
+          - vim
+          - curl
+          - htop
+          - tree
+        state: present
