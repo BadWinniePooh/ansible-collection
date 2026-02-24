@@ -2,8 +2,6 @@
 - name: My first play
   hosts: all
   gather_facts: false
-  vars:
-    greeting: "Welcome to Ansible"
   tasks:
     - name: Print a message
       ansible.builtin.debug:
