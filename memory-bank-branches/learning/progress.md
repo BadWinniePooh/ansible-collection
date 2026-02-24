@@ -17,6 +17,7 @@
 | 11 | Ansible Vault | `inventories/dev/group_vars/all/vault.yml` | done |
 | 12 | Hetzner Cloud provisioning | `playbooks/provision_hetzner.yml`, `group_vars/hcloud_location/`, `group_vars/hcloud_type/` | done |
 | 13 | Deprovision Hetzner VM | `playbooks/deprovision_hetzner.yml` | done |
+| 14 | `ansible.builtin.apt` | `playbooks/manage_packages.yml` | done |
 
 ## Key Concepts Learned
 
@@ -35,12 +36,14 @@
 - `hetzner.hcloud.server_info` captures server IP before deletion for downstream tasks
 - `ansible.builtin.known_hosts` with `state: absent` is idempotent — no error if entry doesn't exist
 - Ansible auto-adds hosts to `known_hosts` on first connection (e.g. via `ping` module)
+- `ansible.builtin.apt` `state: present` is idempotent — reports `ok` if package already installed
+- `cache_valid_time: 3600` skips `apt update` if cache is fresher than 1 hour
+- Packages pre-installed on Ubuntu 24.04 image: `vim`, `curl`, `htop` — not `tree`
 
 ## Remaining Roadmap
 
 | # | Topic | Notes |
 |---|---|---|
-| 14 | `ansible.builtin.apt` | Package management on real host |
 | 15 | `ansible.builtin.service` | Service management |
 | 16 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
 | 17 | Server hardening playbook | SSH config, firewall, unattended-upgrades |

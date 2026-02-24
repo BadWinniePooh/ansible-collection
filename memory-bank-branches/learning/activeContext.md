@@ -6,14 +6,14 @@
 
 ## Session State
 
-Iteration 13 complete. `mount-doom` deprovisioned: server deleted, known_hosts entry removed, hosts.ini reset to placeholder.
-Ready for iteration 14: package management with `ansible.builtin.apt` (requires re-provisioning `mount-doom` first).
+Iteration 14 complete. `manage_packages.yml` installs vim, curl, htop, tree on `mount-doom` using `ansible.builtin.apt`.
+Ready for iteration 15: service management with `ansible.builtin.service`.
 
 ## Immediate Next Step
 
-**Iteration 14 — Package management (`ansible.builtin.apt`)**
+**Iteration 15 — Service management (`ansible.builtin.service`)**
 
-Re-provision `mount-doom`, then install packages using `ansible.builtin.apt`.
+Manage services on `mount-doom` using `ansible.builtin.service`.
 
 ## Open Items / Decisions Pending
 
