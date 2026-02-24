@@ -6,20 +6,23 @@
 
 ## Session State
 
-Iteration 12 complete. VM `mount-doom` running on Hetzner Cloud (`hel1`, `89.167.104.177`).
-SSH connectivity confirmed (`ansible all -m ping` returns `pong`).
-Ready for iteration 13: package management with `ansible.builtin.apt`.
+Iteration 13 complete. `mount-doom` deprovisioned: server deleted, known_hosts entry removed, hosts.ini reset to placeholder.
+Ready for iteration 14: package management with `ansible.builtin.apt` (requires re-provisioning `mount-doom` first).
 
 ## Immediate Next Step
 
-**Iteration 13 — Package management (`ansible.builtin.apt`)**
+**Iteration 14 — Package management (`ansible.builtin.apt`)**
 
-Install packages on `mount-doom` using `ansible.builtin.apt`.
+Re-provision `mount-doom`, then install packages using `ansible.builtin.apt`.
 
 ## Open Items / Decisions Pending
 
 - Vault password strategy: still `--ask-vault-pass`; `~/.vault_pass` file later
 - `web01` placeholder line still in `hosts.ini` (harmless, can clean up on commit)
+
+## Git Notes
+
+- The terminal is always already in the repo root — **do not `cd` before running `git` commands**, it will fail.
 
 ## How to Resume a Session
 

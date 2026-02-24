@@ -16,6 +16,7 @@
 | 10 | Tags (`--tags`, `--skip-tags`) | `roles/common/tasks/main.yml` | done |
 | 11 | Ansible Vault | `inventories/dev/group_vars/all/vault.yml` | done |
 | 12 | Hetzner Cloud provisioning | `playbooks/provision_hetzner.yml`, `group_vars/hcloud_location/`, `group_vars/hcloud_type/` | done |
+| 13 | Deprovision Hetzner VM | `playbooks/deprovision_hetzner.yml` | done |
 
 ## Key Concepts Learned
 
@@ -31,13 +32,16 @@
 - `lineinfile` module for idempotently updating a line in a file by regexp
 - `playbook_dir` built-in variable: directory of the currently running playbook
 - Hetzner server names must be valid hostnames — no underscores
+- `hetzner.hcloud.server_info` captures server IP before deletion for downstream tasks
+- `ansible.builtin.known_hosts` with `state: absent` is idempotent — no error if entry doesn't exist
+- Ansible auto-adds hosts to `known_hosts` on first connection (e.g. via `ping` module)
 
 ## Remaining Roadmap
 
 | # | Topic | Notes |
 |---|---|---|
-| 13 | `ansible.builtin.apt` | Package management on real host |
-| 14 | `ansible.builtin.service` | Service management |
-| 15 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
-| 16 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
-| 17 | Dynamic inventory | Hetzner Cloud plugin |
+| 14 | `ansible.builtin.apt` | Package management on real host |
+| 15 | `ansible.builtin.service` | Service management |
+| 16 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
+| 17 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
+| 18 | Dynamic inventory | Hetzner Cloud plugin |
