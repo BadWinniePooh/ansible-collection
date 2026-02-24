@@ -113,7 +113,96 @@ More specific always wins. `-e` always wins.
 
 ---
 
-## 6. Useful Commands
+## 6. Loops & Conditionals
+
+**Loop over a list:**
+```yaml
+- name: Install packages
+  ansible.builtin.debug:
+    msg: "Installing {{ item }}"
+  loop:
+    - nginx
+    - curl
+    - git
+```
+`item` is the built-in variable holding the current loop value.
+
+**Run only when a condition is true:**
+```yaml
+when: inventory_hostname in groups['webservers']
+when: some_variable == "value"
+when: some_variable is defined
+```
+
+---
+
+## 7. Handlers
+
+Handlers run **once after all tasks**, only if notified by a task that reported `changed`.
+
+```yaml
+tasks:
+  - name: Update config
+    ansible.builtin.copy:
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
+    notify: Restart nginx
+
+handlers:
+  - name: Restart nginx
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
+```
+
+- `changed_when: true` — forces a task to report `changed` (useful for testing)
+- A handler notified multiple times still runs only once
+
+---
+
+## 8. Roles
+
+Reusable, self-contained units of automation with a standardised layout:
+
+```
+roles/common/
+├── tasks/main.yml       # required — tasks run when role is applied
+├── handlers/main.yml    # optional
+├── vars/main.yml        # optional — high precedence variables
+├── defaults/main.yml    # optional — lowest precedence variables
+├── templates/           # optional — Jinja2 .j2 template files
+└── files/               # optional — static files
+```
+
+Apply a role in a playbook:
+```yaml
+- name: Configure all hosts
+  hosts: all
+  roles:
+    - common
+```
+
+---
+
+## 9. ansible.cfg
+
+Project-level configuration file placed at the **project root**. Ansible loads it automatically when running commands from that directory.
+
+```ini
+[defaults]
+inventory  = inventories/dev/hosts.ini   # default inventory (no -i needed)
+roles_path = roles                        # where to find roles
+```
+
+**WSL gotcha:** `/mnt/c/` is world-writable from Linux's perspective, so Ansible ignores `ansible.cfg` there as a security measure. Fix by exporting the path explicitly — add to `~/.zshrc`:
+
+```zsh
+export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.cfg
+```
+
+---
+
+## 10. Useful Commands
 
 | Command | Purpose |
 |---|---|
@@ -125,11 +214,12 @@ More specific always wins. `-e` always wins.
 
 ---
 
-## 7. Project Layout (so far)
+## 11. Project Layout (so far)
 
 ```
 ansible/
 ├── GUIDELINES.md
+├── ansible.cfg
 ├── docs/
 │   └── notes.md                  ← this file
 ├── inventories/
@@ -138,16 +228,22 @@ ansible/
 │       └── group_vars/
 │           ├── all.yml
 │           └── webservers.yml
-└── playbooks/
-    └── hello.yml
+├── playbooks/
+│   ├── hello.yml
+│   ├── loops_and_conditions.yml
+│   ├── handlers_demo.yml
+│   └── site.yml
+└── roles/
+    └── common/
+        └── tasks/
+            └── main.yml
 ```
 
 ---
 
-## Next Topics
+## 12. Next Topics
 
-- Loops (`loop:`)
-- Conditionals (`when:`)
-- Handlers
-- Roles and project structure
+- Templates (`template:` module, Jinja2 `.j2` files)
+- Tags (`--tags`, `--skip-tags`)
 - Real SSH targets (Hetzner Cloud)
+- Ansible Vault (encrypting secrets)
