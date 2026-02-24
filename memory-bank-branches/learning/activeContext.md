@@ -7,6 +7,7 @@
 ## Session State
 
 Iteration 16 complete. Non-root user `sauron` created with vaulted password, SSH key, and sudo. Inventory updated — root no longer used.
+Project restructured: `inventories/dev/` flattened to `inventories/`, new `provisioners/`, `configurations/`, `tasks/` layout. Entry points: `provision.yml` and `destroy.yml`.
 Ready for iteration 17: real template deploy with `ansible.builtin.template`.
 
 ## Immediate Next Step
