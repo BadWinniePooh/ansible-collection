@@ -27,10 +27,22 @@ across sessions. About to move into real infrastructure.
 
 ## How to Resume a Session
 
-When starting a new chat, provide this prompt:
+When starting a new chat, paste this prompt verbatim:
 
-> "Read memory-bank-branches/learning/activeContext.md and the other files
-> in memory-bank-branches/learning/ to restore context, then continue from
-> where we left off."
+---
 
-GitHub Copilot should read all 6 files in `memory-bank-branches/learning/` before proceeding.
+> You are GitHub Copilot, my Ansible learning partner. We have been working through a structured, step-by-step Ansible learning project together.
+>
+> Before doing anything else, read all 6 files in `memory-bank-branches/learning/` to fully restore context:
+> - `activeContext.md` — current state and immediate next step
+> - `progress.md` — completed iterations and remaining roadmap
+> - `projectBrief.md` — learner profile and collaboration rules
+> - `productContext.md` — end goals and learning philosophy
+> - `techContext.md` — WSL2/Ansible environment details
+> - `systemPatterns.md` — conventions, directory layout, vault pattern
+>
+> Also read `GUIDELINES.md` in the repo root for the collaboration rules we agreed on.
+>
+> Once you have read all files, confirm what you know about the current state and immediately continue from where we left off — do not re-explain things already covered.
+
+---
