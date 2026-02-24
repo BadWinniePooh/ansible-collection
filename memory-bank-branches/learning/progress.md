@@ -40,6 +40,11 @@
 - `xfce4-session` is the correct session command for RDP (not `startxfce4`)
 - `passlib` must be injected via `pipx inject ansible-core passlib` for `password_hash` filter
 - Handlers fire once at end of play, regardless of how many tasks notify them
+- `remote_user:` in a play overrides `ansible_user` from inventory for that play only
+- `delegate_to: localhost` runs a task on the control node instead of the remote host
+- Passwordless sudo is unsafe; use `ALL=(ALL) ALL` and a vaulted password instead
+- `validate: /usr/sbin/visudo -cf %s` prevents writing a broken sudoers file
+- `password_hash('sha512')` requires `passlib` on the control node
 - `ansible.builtin.known_hosts` with `state: absent` is idempotent — no error if entry doesn't exist
 - Ansible auto-adds hosts to `known_hosts` on first connection (e.g. via `ping` module)
 - `ansible.builtin.apt` `state: present` is idempotent — reports `ok` if package already installed
@@ -51,6 +56,7 @@
 | # | Topic | Notes |
 |---|---|---|
 | 15 | Remote desktop (XRDP) | `playbooks/setup_remote_desktop.yml` | done |
-| 16 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
-| 17 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
-| 18 | Dynamic inventory | Hetzner Cloud plugin |
+| 16 | Non-root admin user | `playbooks/create_admin_user.yml` | done |
+| 17 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
+| 18 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
+| 19 | Dynamic inventory | Hetzner Cloud plugin |

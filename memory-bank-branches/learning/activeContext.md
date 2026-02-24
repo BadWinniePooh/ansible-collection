@@ -6,14 +6,14 @@
 
 ## Session State
 
-Iteration 15 complete. `mount-doom` reachable over RDP with xfce4 desktop via xrdp.
-Ready for iteration 16: real template deploy with `ansible.builtin.template`.
+Iteration 16 complete. Non-root user `sauron` created with vaulted password, SSH key, and sudo. Inventory updated — root no longer used.
+Ready for iteration 17: real template deploy with `ansible.builtin.template`.
 
 ## Immediate Next Step
 
-**Iteration 16 — Real template deploy (`ansible.builtin.template`)**
+**Iteration 17 — Real template deploy (`ansible.builtin.template`)**
 
-Render a Jinja2 template with facts/variables and deploy it to `mount-doom` using `ansible.builtin.template`.
+Render a Jinja2 template using gathered facts and deploy it to `mount-doom` using `ansible.builtin.template`.
 
 ## Open Items / Decisions Pending
 
