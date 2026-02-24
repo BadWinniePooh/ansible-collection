@@ -1,0 +1,13 @@
+---
+greeting: "Hello from group_vars/all"
+db_password: "{{ vault_db_password }}"
+
+my_ansible_user: "morgoth"
+my_ansible_user_password: "{{ vault_my_ansible_user_password }}"
+my_ssh_key_name: "{{ vault_my_ssh_public.name }}"
+my_ssh_public_key: "{{ vault_my_ssh_public.key }}"
+my_hetzner_api_token: "{{ vault_my_hetzner_api_token }}"
+
+desktop_users:
+  - name: "sauron"
+    password: "{{ vault_sauron.password }}"

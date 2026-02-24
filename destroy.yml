@@ -1,0 +1,14 @@
+---
+# Provision a Linux development environment
+#
+# Parameters:
+#
+#   provider: The cloud provider to use (aws, hcloud)
+#
+# Example usage:
+#
+#  ansible-playbook ./destroy.yml --extra-vars "provider=hetzner platform=linux" --ask-vault-pass
+#
+
+- name: Provision {{ provider }} Cloud Instance
+  import_playbook: provisioners/{{ provider }}-{{ platform }}-down.yml

@@ -2,7 +2,7 @@
 - name: Deprovision Hetzner Cloud VM
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: true
 
   # hetzner_api_token is loaded automatically from group_vars/all/vars.yml + vault.yml
   # Override server name at runtime if needed: -e hcloud_server_name=my-server
@@ -13,7 +13,7 @@
   tasks:
     - name: Gather server info for {{ hcloud_server_name }}
       hetzner.hcloud.server_info:
-        api_token: "{{ hetzner_api_token }}"
+        api_token: "{{ my_hetzner_api_token }}"
         name: "{{ hcloud_server_name }}"
       register: server_info
 
@@ -24,7 +24,7 @@
 
     - name: Delete {{ hcloud_server_name }} on Hetzner Cloud
       hetzner.hcloud.server:
-        api_token: "{{ hetzner_api_token }}"
+        api_token: "{{ my_hetzner_api_token }}"
         name: "{{ hcloud_server_name }}"
         state: absent
 
@@ -36,6 +36,6 @@
 
     - name: Reset hosts.ini entry to placeholder
       ansible.builtin.lineinfile:
-        path: "{{ playbook_dir }}/../inventories/dev/hosts.ini"
+        path: "{{ playbook_dir }}/../inventories/hosts.ini"
         regexp: '^{{ hcloud_server_name }} ansible_host='
         line: "{{ hcloud_server_name }} ansible_host=<PLACEHOLDER> ansible_user=root"
