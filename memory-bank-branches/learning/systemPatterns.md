@@ -7,7 +7,8 @@
 ansible/
 ├── GUIDELINES.md
 ├── ansible.cfg
-├── memory-bank/           ← session context and knowledge persistence
+├── memory-bank-branches/  ← session context, scoped by learning branch
+│   └── learning/          ← active scope (activeContext, progress, etc.)
 ├── docs/
 │   └── notes.md           ← human-readable learning reference
 ├── inventories/

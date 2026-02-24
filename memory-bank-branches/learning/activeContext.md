@@ -29,7 +29,8 @@ across sessions. About to move into real infrastructure.
 
 When starting a new chat, provide this prompt:
 
-> "Read memory-bank/activeContext.md and the other files in memory-bank/ to
-> restore context, then continue from where we left off."
+> "Read memory-bank-branches/learning/activeContext.md and the other files
+> in memory-bank-branches/learning/ to restore context, then continue from
+> where we left off."
 
-GitHub Copilot should read all 6 memory bank files before proceeding.
+GitHub Copilot should read all 6 files in `memory-bank-branches/learning/` before proceeding.
