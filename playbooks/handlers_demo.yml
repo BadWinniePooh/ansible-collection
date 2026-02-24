@@ -1,0 +1,20 @@
+---
+- name: Handlers demo
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Simulate a config change
+      ansible.builtin.debug:
+        msg: "Config written to {{ inventory_hostname }}"
+      changed_when: true
+      notify: Config changed handler
+
+    - name: This task does not trigger the handler
+      ansible.builtin.debug:
+        msg: "Nothing changed here"
+
+  handlers:
+    - name: Config changed handler
+      ansible.builtin.debug:
+        msg: "HANDLER: Config changed on {{ inventory_hostname }}, would restart service"
