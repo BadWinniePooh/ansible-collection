@@ -8,3 +8,8 @@
   ansible.builtin.debug:
     msg: "{{ lookup('template', 'motd.j2') }}"
   tags: [common, template]
+
+- name: Show db_password variable
+  ansible.builtin.debug:
+    msg: "DB password is: {{ db_password }}"
+  tags: [vault]
