@@ -2,7 +2,13 @@
 - name: My first play
   hosts: all
   gather_facts: false
+  vars:
+    greeting: "Welcome to Ansible"
   tasks:
     - name: Print a message
       ansible.builtin.debug:
         msg: "Hello from {{ inventory_hostname }}"
+
+    - name: Print greeting variable
+      ansible.builtin.debug:
+        msg: "{{ greeting }}"
