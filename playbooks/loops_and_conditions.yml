@@ -1,0 +1,22 @@
+---
+- name: Conditionals and loops
+  hosts: all
+  gather_facts: false
+
+  vars:
+    packages:
+      - nginx
+      - curl
+      - git
+
+  tasks:
+    - name: Print packages only for webservers
+      ansible.builtin.debug:
+        msg: "Would install {{ item }} on {{ inventory_hostname }}"
+      loop: "{{ packages }}"
+      when: inventory_hostname in groups['webservers']
+
+    - name: Print a message only for dbservers
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} is a database server"
+      when: inventory_hostname in groups['dbservers']
