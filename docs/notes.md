@@ -282,7 +282,131 @@ ansible-playbook playbooks/site.yml --vault-password-file ~/.vault_pass
 
 ---
 
-## 12. ansible.cfg
+## 12. Hetzner Cloud Provisioning
+
+### Installing a collection
+
+Ansible collections extend core with third-party modules. Install from Ansible Galaxy:
+
+```zsh
+ansible-galaxy collection install hetzner.hcloud
+```
+
+Collections that call external APIs also need a Python SDK in the same venv:
+
+```zsh
+pipx inject ansible-core hcloud   # adds hcloud Python lib to Ansible's isolated venv
+```
+
+### Provisioning playbook structure
+
+Provisioning runs against `localhost` with `connection: local` — no SSH needed, it calls the Hetzner API instead:
+
+```yaml
+- name: Provision Hetzner Cloud VM
+  hosts: localhost
+  connection: local
+  gather_facts: false
+```
+
+### Storing the API token in Vault
+
+Follow the same `vault_` prefix pattern:
+```
+vault.yml  → vault_hetzner_api_token: "<token>"
+vars.yml   → hetzner_api_token: "{{ vault_hetzner_api_token }}"
+```
+
+### Loading variable files explicitly with vars_files
+
+`group_vars/<group>/` files are only auto-loaded for hosts that belong to that group.
+For `localhost` plays, load reference files explicitly:
+
+```yaml
+vars_files:
+  - "../inventories/dev/group_vars/hcloud_location/vars.yml"
+  - "../inventories/dev/group_vars/hcloud_type/vars.yml"
+```
+
+This makes reference/documentation variable files available without polluting `group_vars/all/`.
+
+### Key modules (hetzner.hcloud collection)
+
+| Module | Purpose |
+|---|---|
+| `hetzner.hcloud.ssh_key_info` | List all SSH keys in the Hetzner account |
+| `hetzner.hcloud.ssh_key` | Upload/manage an SSH key |
+| `hetzner.hcloud.server` | Create/delete/manage a VM |
+
+### Idempotent SSH key upload
+
+Hetzner rejects duplicate key content. Compare by MD5 fingerprint before uploading:
+
+```yaml
+- name: Get local SSH key fingerprint
+  ansible.builtin.command:
+    cmd: "ssh-keygen -E md5 -lf ~/.ssh/hetzner_ansible.pub"
+  register: local_key_info
+  changed_when: false
+
+- name: Set fingerprint fact
+  ansible.builtin.set_fact:
+    local_key_fingerprint: "{{ local_key_info.stdout.split()[1] | regex_replace('^MD5:', '') }}"
+
+- name: Upload key only if not already present
+  hetzner.hcloud.ssh_key:
+    ...
+  when: local_key_fingerprint not in (existing_keys | map(attribute='fingerprint') | list)
+```
+
+- `-E md5` — makes `ssh-keygen` output MD5 fingerprint to match Hetzner's format
+- `regex_replace('^MD5:', '')` — strips the `MD5:` prefix from the output
+
+### Updating hosts.ini automatically
+
+After provisioning, write the real IP into `hosts.ini` so all subsequent playbooks work without manual edits:
+
+```yaml
+- name: Update hosts.ini with real IP
+  ansible.builtin.lineinfile:
+    path: "{{ playbook_dir }}/../inventories/dev/hosts.ini"
+    regexp: '^{{ hcloud_server_name }} ansible_host='
+    line: "{{ hcloud_server_name }} ansible_host={{ hcloud_server.hcloud_server.ipv4_address }} ansible_user={{ admin_user_on_fresh_system }}"
+```
+
+- `lineinfile` — replaces a line matching `regexp`, or appends if no match found
+- `playbook_dir` — built-in variable: the directory containing the running playbook
+- `register` + `.hcloud_server.ipv4_address` — how to extract the IP from the server module's return value
+
+### Server hostname constraint
+
+Hetzner requires server names to be valid hostnames (RFC 952): lowercase letters, digits, hyphens only. **Underscores are not allowed.**
+
+### Key SSH commands
+
+```zsh
+# Generate a dedicated key pair for Ansible (no passphrase for unattended access)
+ssh-keygen -t ed25519 -C "ansible@hetzner" -f ~/.ssh/hetzner_ansible -N ""
+
+# Show MD5 fingerprint (matches Hetzner's format)
+ssh-keygen -E md5 -lf ~/.ssh/hetzner_ansible.pub
+```
+
+### Hetzner server types (quick reference)
+
+| Series | CPU | Best for |
+|---|---|---|
+| `cx*` | Intel/AMD shared | General purpose |
+| `cpx*` | AMD EPYC shared | Slightly cheaper per core |
+| `cax*` | Ampere ARM shared | Best price/performance (EU only) |
+| `ccx*` | AMD dedicated | Production, no noisy-neighbour |
+
+Full table with pricing: `inventories/dev/group_vars/hcloud_type/vars.yml`
+Locations: `inventories/dev/group_vars/hcloud_location/vars.yml`
+
+---
+
+## 13. ansible.cfg
 
 Project-level configuration file placed at the **project root**. Ansible loads it automatically when running commands from that directory.
 
@@ -300,7 +424,7 @@ export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.
 
 ---
 
-## 13. Useful Commands
+## 14. Useful Commands
 
 | Command | Purpose |
 |---|---|
@@ -312,7 +436,7 @@ export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.
 
 ---
 
-## 14. Project Layout (so far)
+## 15. Project Layout (so far)
 
 ```
 ansible/
@@ -327,12 +451,17 @@ ansible/
 │           ├── all/
 │           │   ├── vars.yml
 │           │   └── vault.yml  ← AES256 encrypted
-│           └── webservers.yml
+│           ├── webservers.yml
+│           ├── hcloud_location/
+│           │   └── vars.yml   ← location reference table + hcloud_default_location
+│           └── hcloud_type/
+│               └── vars.yml   ← server type reference table + hcloud_default_type
 ├── playbooks/
 │   ├── hello.yml
 │   ├── loops_and_conditions.yml
 │   ├── handlers_demo.yml
-│   └── site.yml
+│   ├── site.yml
+│   └── provision_hetzner.yml  ← provisions VM via Hetzner API
 └── roles/
     └── common/
         ├── tasks/
@@ -343,9 +472,11 @@ ansible/
 
 ---
 
-## 15. Next Topics
+## 16. Next Topics
 
-- Real Hetzner Cloud VMs (SSH connectivity, `ansible -m ping`)
+- Test SSH connectivity to live VM: `ansible all -m ping`
 - `ansible.builtin.apt` for package management
 - `ansible.builtin.service` for service management
-- A real server hardening playbook
+- Real template deploy: `ansible.builtin.template` writing `motd.j2` to `/etc/motd`
+- Server hardening playbook (SSH config, firewall, unattended-upgrades)
+- Dynamic inventory with the Hetzner Cloud plugin

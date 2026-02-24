@@ -1,0 +1,21 @@
+---
+# Hetzner Cloud — Available Locations
+#
+# Use the location name as the value for hcloud_location in vars.yml
+# or pass it via -e hcloud_location=<name> on the command line.
+#
+# | Name  | City                  | Country     | Region        |
+# |-------|-----------------------|-------------|---------------|
+# | nbg1  | Nuremberg             | Germany     | EU (Central)  |
+# | fsn1  | Falkenstein           | Germany     | EU (Central)  |
+# | hel1  | Helsinki              | Finland     | EU (North)    |
+# | ash   | Ashburn, Virginia     | USA         | US (East)     |
+# | hil   | Hillsboro, Oregon     | USA         | US (West)     |
+# | sin   | Singapore             | Singapore   | Asia Pacific  |
+#
+# Note: ARM (cax*) server types are only available in nbg1, fsn1, hel1.
+#       All other types are available in all locations.
+#
+# Reference: https://www.hetzner.com/cloud/
+
+hcloud_default_location: "hel1"

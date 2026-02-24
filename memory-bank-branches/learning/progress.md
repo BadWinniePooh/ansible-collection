@@ -15,6 +15,7 @@
 | 9 | Jinja2 Templates | `roles/common/templates/motd.j2` | done |
 | 10 | Tags (`--tags`, `--skip-tags`) | `roles/common/tasks/main.yml` | done |
 | 11 | Ansible Vault | `inventories/dev/group_vars/all/vault.yml` | done |
+| 12 | Hetzner Cloud provisioning | `playbooks/provision_hetzner.yml`, `group_vars/hcloud_location/`, `group_vars/hcloud_type/` | done |
 
 ## Key Concepts Learned
 
@@ -24,13 +25,17 @@
 - `ansible.cfg` ignored on WSL `/mnt/c/` — workaround: `ANSIBLE_CONFIG` env var
 - Vault `vault_` prefix convention for safe secret referencing
 - Role task names appear prefixed: `<role> : <task name>`
-- Tags allow surgical task execution without changing playbooks
+- `group_vars/<group>/` only loads for hosts in that group — use `vars_files:` to load explicitly in `localhost` plays
+- Hetzner fingerprints are MD5 format; `ssh-keygen` defaults to SHA256 — use `-E md5` flag to match
+- `hetzner.hcloud` collection requires `pipx inject ansible-core hcloud` for the Python SDK
+- `lineinfile` module for idempotently updating a line in a file by regexp
+- `playbook_dir` built-in variable: directory of the currently running playbook
+- Hetzner server names must be valid hostnames — no underscores
 
 ## Remaining Roadmap
 
 | # | Topic | Notes |
 |---|---|---|
-| 12 | Real SSH targets | Provision Hetzner Cloud VM, replace placeholder IPs |
 | 13 | `ansible.builtin.apt` | Package management on real host |
 | 14 | `ansible.builtin.service` | Service management |
 | 15 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |

@@ -1,0 +1,52 @@
+---
+# Hetzner Cloud — Available Server Types
+#
+# Use the type name as the value for hcloud_server_type in vars.yml
+# or pass it via -e hcloud_server_type=<name> on the command line.
+#
+# Prices are approximate gross (incl. VAT) in EUR at nbg1. Verify current
+# pricing at https://www.hetzner.com/cloud/
+#
+# --- Shared CPU: cx series (Intel/AMD) — good general-purpose choice -------
+#
+# | Type  | vCPUs | RAM   | SSD    | €/hour | €/month | Notes              |
+# |-------|-------|-------|--------|--------|---------|--------------------|
+# | cx23  |     2 |  4 GB |  40 GB |  0.007 |    3.79 | Entry-level        |
+# | cx33  |     4 |  8 GB |  80 GB |  0.011 |    6.67 | Small workloads    |
+# | cx43  |     8 | 16 GB | 160 GB |  0.020 |   12.26 | Medium workloads   |
+# | cx53  |    16 | 32 GB | 320 GB |  0.038 |   23.53 | Large workloads    |
+#
+# --- Shared CPU: cpx series (AMD EPYC) — slightly cheaper per core ---------
+#
+# | Type  | vCPUs | RAM   | SSD    | €/hour | €/month | Notes              |
+# |-------|-------|-------|--------|--------|---------|--------------------|
+# | cpx11 |     2 |  2 GB |  40 GB |  0.006 |    3.37 | Minimal RAM        |
+# | cpx21 |     3 |  4 GB |  80 GB |  0.009 |    5.20 |                    |
+# | cpx31 |     4 |  8 GB | 160 GB |  0.015 |    9.27 |                    |
+# | cpx41 |     8 | 16 GB | 240 GB |  0.027 |   16.76 |                    |
+# | cpx51 |    16 | 32 GB | 360 GB |  0.049 |   30.71 |                    |
+#
+# --- Shared CPU: cax series (Ampere ARM) — best price/performance ratio ----
+# Available in EU locations only (nbg1, fsn1, hel1)
+#
+# | Type  | vCPUs | RAM   | SSD    | €/hour | €/month | Notes              |
+# |-------|-------|-------|--------|--------|---------|--------------------|
+# | cax11 |     2 |  4 GB |  40 GB |  0.004 |    2.63 | Cheapest option    |
+# | cax21 |     4 |  8 GB |  80 GB |  0.007 |    4.45 |                    |
+# | cax31 |     8 | 16 GB | 160 GB |  0.013 |    8.21 |                    |
+# | cax41 |    16 | 32 GB | 320 GB |  0.025 |   15.59 |                    |
+#
+# --- Dedicated CPU: ccx series — no noisy-neighbour, production workloads --
+#
+# | Type  | vCPUs | RAM   | SSD    | €/hour | €/month | Notes              |
+# |-------|-------|-------|--------|--------|---------|--------------------|
+# | ccx13 |     2 |  8 GB |  80 GB |  0.016 |    9.70 | Dedicated entry    |
+# | ccx23 |     4 | 16 GB | 160 GB |  0.029 |   18.25 |                    |
+# | ccx33 |     8 | 32 GB | 240 GB |  0.057 |   35.59 |                    |
+# | ccx43 |    16 | 64 GB | 360 GB |  0.111 |   69.65 |                    |
+# | ccx53 |    32 | 128 GB| 600 GB |  0.219 |  137.27 |                    |
+# | ccx63 |    48 | 192 GB| 960 GB |  0.327 |  204.67 |                    |
+
+hcloud_default_type: "cx33"
+
+admin_user_on_fresh_system: "root"

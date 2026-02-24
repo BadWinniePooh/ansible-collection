@@ -1,0 +1,76 @@
+---
+- name: Provision Hetzner Cloud VM
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars_files:
+    - "../inventories/dev/group_vars/hcloud_location/vars.yml"
+    - "../inventories/dev/group_vars/hcloud_type/vars.yml"
+
+  # Defaults for hcloud_server_type, hcloud_location, hcloud_image,
+  # hcloud_server_name, hcloud_ssh_key_label and admin_user_on_fresh_system
+  # are in inventories/dev/group_vars/all/vars.yml — override with -e as needed.
+  # Reference tables: inventories/dev/group_vars/hcloud_location/ and hcloud_type/
+  vars:
+    hcloud_image: "ubuntu-24.04"
+    hcloud_server_type: "{{ hcloud_default_type | default('hcloud_server_type or hcloud_default_type must be specified') }}"
+    hcloud_location: "{{ hcloud_default_location | default('hcloud_location or hcloud_default_location must be specified') }}"    
+    hcloud_server_name: "mount-doom"
+
+  tasks:
+    - name: Get local SSH key fingerprint
+      ansible.builtin.command:
+        cmd: "ssh-keygen -E md5 -lf ~/.ssh/hetzner_ansible.pub"
+      register: local_key_info
+      changed_when: false
+
+    - name: Set local key fingerprint fact
+      ansible.builtin.set_fact:
+        local_key_fingerprint: "{{ local_key_info.stdout.split()[1] | regex_replace('^MD5:', '') }}"
+
+    - name: Gather existing Hetzner SSH keys
+      hetzner.hcloud.ssh_key_info:
+        api_token: "{{ hetzner_api_token }}"
+      register: existing_ssh_keys
+
+    - name: Upload SSH public key to Hetzner Cloud
+      hetzner.hcloud.ssh_key:
+        api_token: "{{ hetzner_api_token }}"
+        name: "{{ hcloud_ssh_key_label }}"
+        public_key: "{{ lookup('file', '~/.ssh/hetzner_ansible.pub') }}"
+        state: present
+      when: local_key_fingerprint not in (existing_ssh_keys.hcloud_ssh_key_info | map(attribute='fingerprint') | list)
+
+    - name: Resolve SSH key name to use (existing or newly uploaded)
+      ansible.builtin.set_fact:
+        hetzner_ssh_key_name: >-
+          {{ (existing_ssh_keys.hcloud_ssh_key_info
+              | selectattr('fingerprint', 'equalto', local_key_fingerprint)
+              | map(attribute='name')
+              | list
+              | first)
+             if local_key_fingerprint in (existing_ssh_keys.hcloud_ssh_key_info | map(attribute='fingerprint') | list)
+             else hcloud_ssh_key_label }}
+
+    - name: Create {{ hcloud_server_name }} virtual server
+      hetzner.hcloud.server:
+        api_token: "{{ hetzner_api_token }}"
+        name: "{{ hcloud_server_name }}"
+        server_type: "{{ hcloud_server_type }}"
+        image: "{{ hcloud_image }}"
+        location: "{{ hcloud_location }}"
+        ssh_keys:
+          - "{{ hetzner_ssh_key_name }}"
+        state: present
+      register: hcloud_server
+
+    - name: Show server IP
+      ansible.builtin.debug:
+        msg: "{{ hcloud_server_name }} IP address: {{ hcloud_server.hcloud_server.ipv4_address }}"
+
+    - name: Update hosts.ini with real IP
+      ansible.builtin.lineinfile:
+        path: "{{ playbook_dir }}/../inventories/dev/hosts.ini"
+        regexp: '^{{ hcloud_server_name }} ansible_host='
+        line: "{{ hcloud_server_name }} ansible_host={{ hcloud_server.hcloud_server.ipv4_address }} ansible_user={{ admin_user_on_fresh_system }}"

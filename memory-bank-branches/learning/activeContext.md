@@ -6,24 +6,20 @@
 
 ## Session State
 
-All 11 foundation iterations completed. Memory bank created to persist context
-across sessions. About to move into real infrastructure.
+Iteration 12 complete. VM `mount-doom` running on Hetzner Cloud (`hel1`, `89.167.104.177`).
+SSH connectivity confirmed (`ansible all -m ping` returns `pong`).
+Ready for iteration 13: package management with `ansible.builtin.apt`.
 
 ## Immediate Next Step
 
-**Iteration 12 — Real SSH targets (Hetzner Cloud)**
+**Iteration 13 — Package management (`ansible.builtin.apt`)**
 
-1. Learner provisions a Hetzner Cloud VM (or provides existing IPs)
-2. Replace `<PLACEHOLDER>` values in `inventories/dev/hosts.ini`
-3. Set up SSH key access from WSL2 to the VM
-4. Run first real connectivity test: `ansible all -m ping`
-5. Run first real template deploy: `ansible.builtin.template` writing `motd.j2` to `/etc/motd`
+Install packages on `mount-doom` using `ansible.builtin.apt`.
 
 ## Open Items / Decisions Pending
 
-- Hetzner Cloud API token → will be stored in Vault as `vault_hetzner_api_token`
-- SSH key location on WSL: `~/.ssh/` — needs to be created/configured
-- Vault password strategy: `--ask-vault-pass` for now, `~/.vault_pass` file later
+- Vault password strategy: still `--ask-vault-pass`; `~/.vault_pass` file later
+- `web01` placeholder line still in `hosts.ini` (harmless, can clean up on commit)
 
 ## How to Resume a Session
 
