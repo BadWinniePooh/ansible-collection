@@ -6,20 +6,22 @@
 
 ## Session State
 
-Memory-bank-branch created. No files written to `docker/` yet.
+Iteration 1 complete:
+- `docker/Dockerfile` — Ubuntu 22.04, pipx, ansible-core 2.17.14, hcloud + passlib, hetzner.hcloud collection
+- `docker/entrypoint.sh` — validates PLAYBOOK env var, lists available playbooks on error, execs ansible-playbook
+- `.dockerignore` — excludes .git, memory-bank-branches/, .envrc
 
 ## Immediate Next Step
 
-**Iteration 1 — Dockerfile + entrypoint**
+**Iteration 2 — Build verification**
 
-Create `docker/Dockerfile` and `docker/entrypoint.sh` to package this repo as a
-runnable Ansible container, with `PLAYBOOK` env var selecting the playbook and
-vault password supplied via a mounted file.
+Run `docker build -t ansible-runner -f docker/Dockerfile .` and verify the image
+builds cleanly, ansible-playbook is available, and the entrypoint error message
+works (run with no PLAYBOOK set).
 
 ## Open Items / Decisions Pending
 
-- `.dockerignore`: decide what to exclude (memory-bank-branches, .git, etc.)
-- Whether to pin `ansible-core` version in Dockerfile or float to latest
+- None currently
 
 ## Git Notes
 

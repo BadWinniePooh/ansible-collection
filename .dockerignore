@@ -1,0 +1,21 @@
+# Version control
+.git
+.gitignore
+
+# Memory bank — session context, not needed at runtime
+memory-bank-branches/
+
+# Local environment config (direnv) — container uses ENV vars directly
+.envrc
+
+# Editor / IDE
+.vscode/
+*.swp
+*.swo
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
