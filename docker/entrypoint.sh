@@ -1,6 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
+VAULT_FILE="/ansible/inventories/group_vars/all/vault.yml"
+
+if [[ ! -f "$VAULT_FILE" ]]; then
+  echo ""
+  echo "WARNING: vault.yml is not mounted. Plays that reference vault variables will fail."
+  echo "Mount it with:"
+  echo "  -v /path/to/your/vault.yml:${VAULT_FILE}:ro"
+  echo ""
+fi
+
 if [[ -z "${PLAYBOOK:-}" ]]; then
   echo ""
   echo "ERROR: PLAYBOOK environment variable is required."

@@ -21,6 +21,8 @@
 - `.dockerignore` excludes `.git`, `memory-bank-branches/`, `.envrc` to keep image clean
 - `requirements.yml` and `tasks/` files must be excluded from entrypoint playbook listing — they are not runnable playbooks
 - Entrypoint args (`$@`) are passed to `ansible-playbook` after the playbook path — overriding entrypoint needed to run arbitrary container commands
+- `**/vault.yml` excluded via `.dockerignore` — Ansible Vault secrets must never be baked into the image; mount at runtime
+- Entrypoint warns (non-fatal) if vault.yml is not mounted — lets non-vault playbooks run without obstruction
 
 ## Remaining Roadmap
 

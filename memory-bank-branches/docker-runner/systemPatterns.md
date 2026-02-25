@@ -51,16 +51,25 @@ exec ansible-playbook "$PLAYBOOK" "$@"
 docker run --rm \
   -e PLAYBOOK=provision.yml \
   -v ~/.vault_pass:/vault_pass:ro \
+  -v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   ansible-runner
 
 # With extra-vars and tags
 docker run --rm \
   -e PLAYBOOK=provision.yml \
   -v ~/.vault_pass:/vault_pass:ro \
+  -v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   ansible-runner \
   --extra-vars "provider=hetzner platform=linux" \
   --tags provision
 ```
+
+## Secrets at Runtime (never baked in)
+
+| What | Mount path in container | How |
+|---|---|---|
+| Vault password | `/vault_pass` | `-v ~/.vault_pass:/vault_pass:ro` |
+| Vault secrets file | `/ansible/inventories/group_vars/all/vault.yml` | `-v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro` |
 
 ## Build Pattern
 

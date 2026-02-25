@@ -5,6 +5,9 @@
 # Memory bank — session context, not needed at runtime
 memory-bank-branches/
 
+# Ansible Vault secrets — must be mounted at runtime, never baked in
+**/vault.yml
+
 # Local environment config (direnv) — container uses ENV vars directly
 .envrc
 
