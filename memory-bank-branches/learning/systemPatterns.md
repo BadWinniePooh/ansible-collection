@@ -39,7 +39,9 @@ ansible/
 │       ├── loops_and_conditions.yml
 │       └── site.yml
 ├── tasks/                     ← reusable task files (imported with import_tasks)
-│   └── add-server-to-known-hosts.yml
+│   ├── add-server-to-known-hosts.yml
+│   └── hetzner/               ← Hetzner-specific task files
+│       └── ensure-ssh-key.yml
 └── roles/
     └── <role>/
         ├── tasks/main.yml

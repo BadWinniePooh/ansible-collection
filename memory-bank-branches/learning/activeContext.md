@@ -10,11 +10,13 @@ Infrastructure fixes applied this session (no new iteration number — these are
 - `inventories/hosts.ini` recreated (was lost during iter-16 restructure); auto-written by provisioner
 - `ANSIBLE_CONFIG` now managed via `direnv` + `.envrc` (not hardcoded in `~/.zshrc`)
 - `ansible_ssh_private_key_file` added to `group_vars/hcloud_type/vars.yml`
-- Flat `my_*` vars in `group_vars/all/vars.yml` consolidated into `my_hetzner_config` dict
+- Flat `my_*` vars consolidated into `my_hetzner_config` dict; vault refs consolidated under `vault_hetzner_secrets`
 - Inventory group renamed from `webservers` to `mordor`; provisioner writes it dynamically
 - `.gitignore` created
 - `hetzner-linux-down.yml` reset-placeholder task uncommented and updated
-- `setup-desktop.yml` running (install minimal GNOME desktop task in progress on mount-doom)
+- SSH key handling extracted to `tasks/hetzner/ensure-ssh-key.yml`
+- `setup-desktop.yml` monolithic apt task split into 3 sequential tasks; `ansible-core` removed (control node only)
+- `ubuntu-desktop-minimal` temporarily commented out — cx33 OOM-crashed during install; under investigation
 
 Ready for iteration 17 once `configure-linux.yml` finishes successfully.
 

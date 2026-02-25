@@ -1,0 +1,43 @@
+---
+# Ensures an SSH key with the given fingerprint exists on Hetzner Cloud
+# and resolves hcloud_ssh_key_name to the canonical name on Hetzner.
+#
+# Required vars (passed by caller):
+#   hcloud_token        - Hetzner API token
+#   hcloud_ssh_key_name - local key filename (without .pub); updated in-place via set_fact
+
+- name: Get local SSH key fingerprint
+  ansible.builtin.command:
+    cmd: "ssh-keygen -E md5 -lf ~/.ssh/{{ hcloud_ssh_key_name }}.pub"
+  register: local_key_info
+  changed_when: false
+
+- name: Set local key fingerprint fact
+  ansible.builtin.set_fact:
+    local_key_fingerprint: "{{ local_key_info.stdout.split()[1] | regex_replace('^MD5:', '') }}"
+
+- name: Gather existing Hetzner SSH keys
+  hetzner.hcloud.ssh_key_info:
+    api_token: "{{ hcloud_token }}"
+  register: existing_ssh_keys
+
+- name: Upload SSH public key to Hetzner Cloud
+  hetzner.hcloud.ssh_key:
+    api_token: "{{ hcloud_token }}"
+    state: present
+    name: "{{ hcloud_ssh_key_name }}"
+    public_key: "{{ lookup('file', '~/.ssh/' + hcloud_ssh_key_name + '.pub') }}"
+  when: local_key_fingerprint not in (existing_ssh_keys.hcloud_ssh_key_info | map(attribute='fingerprint') | list)
+
+- name: Resolve SSH key name to use (existing or newly uploaded)
+  ansible.builtin.set_fact:
+    hcloud_ssh_key_name: >-
+      {{ (existing_ssh_keys.hcloud_ssh_key_info
+          | selectattr('fingerprint', 'equalto', local_key_fingerprint)
+          | map(attribute='name')
+          | list
+          | first)
+         if local_key_fingerprint in (existing_ssh_keys.hcloud_ssh_key_info | map(attribute='fingerprint') | list)
+         else hcloud_ssh_key_name
+      }}
+# hcloud_ssh_key_name is now set in play scope and available to the calling playbook

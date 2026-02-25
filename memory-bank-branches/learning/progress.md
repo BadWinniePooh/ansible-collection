@@ -57,6 +57,11 @@
 - `direnv` + `.envrc` for project-scoped env vars — sets `ANSIBLE_CONFIG` automatically on `cd` into repo, unsets on `cd` away
 - Grouping related vars under a namespace dict (e.g. `my_hetzner_config.api_token`) avoids flat-var pollution and makes playbooks self-documenting
 - Inventory group name is a design choice — use domain-meaningful names (e.g. `mordor`) not generic ones (e.g. `webservers`)
+- `import_tasks` is static (resolved at parse time) — play-scope vars flow in automatically, no `vars:` passing needed
+- `set_fact` writes to play scope — "return values" from imported task files are just facts readable by all subsequent tasks in the play
+- `tasks/` subdirectories (e.g. `tasks/hetzner/`) keep provider-specific task files organised
+- `ansible-core` must only be installed on the control node — never install it on managed nodes via `apt`
+- Splitting a large monolithic `apt` task into sequential tasks reduces peak memory during post-install scripts
 
 ## Remaining Roadmap
 

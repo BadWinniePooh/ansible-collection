@@ -9,8 +9,10 @@
 
   pre_tasks:
     # TODO: smell - Update apt cache is duplicate in several playbooks
-    - name: Update apt cache if needed
-      apt: update_cache=yes cache_valid_time=3600
+    - name: Update apt cache (if older than 1 hour)
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
 
   handlers:
     # TODO: smell - cleanup apt cache is duplicate in several playbooks
@@ -35,16 +37,27 @@
     - name: Install minimal GNOME desktop
       apt:
         name:
+          - dbus-x11
+#          - ubuntu-desktop-minimal
+          - python3-full
+        state: present
+      notify: Cleanup apt cache
+
+    - name: Install XFCE extras and developer tools
+      apt:
+        name:
           - build-essential
-          - dotnet-sdk-8.0
           - gh
           - keepassxc
-          - dbus-x11
           - libsecret-tools
           - seahorse
-          - ubuntu-desktop-minimal
-          - python3-full
-          - ansible-core
+        state: present
+      notify: Cleanup apt cache
+
+    - name: Install .NET SDK
+      apt:
+        name:
+          - dotnet-sdk-8.0
         state: present
       notify: Cleanup apt cache
 
