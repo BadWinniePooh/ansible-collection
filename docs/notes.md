@@ -17,6 +17,25 @@ Quick reference for everything covered so far.
   ansible-inventory --version
   ```
 
+### Project Dependencies
+
+This project uses two requirements files to capture all dependencies:
+
+| File | Managed by | Purpose |
+|---|---|---|
+| `requirements.yml` | `ansible-galaxy` | Ansible collections (`hetzner.hcloud`, `ansible.posix`) |
+| `requirements.txt` | `pipx inject` | Python packages (`hcloud`, `passlib`) |
+
+After cloning the repo, install both with:
+
+```zsh
+ansible-galaxy collection install -r requirements.yml
+pipx inject ansible-core -r requirements.txt
+```
+
+- `ansible-galaxy collection install` downloads collections to `~/.ansible/collections/`
+- `pipx inject` adds Python packages into the same isolated venv that `ansible-core` lives in — they are not visible to the system Python
+
 ---
 
 ## 2. Key Concepts

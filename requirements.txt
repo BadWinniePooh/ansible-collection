@@ -1,0 +1,10 @@
+# Python packages for the Ansible control node
+#
+# These must be injected into the ansible-core pipx venv:
+#   pipx inject ansible-core -r requirements.txt
+
+# Hetzner Cloud Python SDK — required by the hetzner.hcloud collection
+hcloud
+
+# Password hashing support — required for the password_hash('sha512') Jinja2 filter
+passlib
