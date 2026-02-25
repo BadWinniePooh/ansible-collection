@@ -4,16 +4,19 @@
   connection: local
   gather_facts: true
 
+  vars_files:
+    - ../inventories/group_vars/all/vars.yml
+    - ../inventories/group_vars/all/vault.yml
   # hetzner_api_token is loaded automatically from group_vars/all/vars.yml + vault.yml
   # Override server name at runtime if needed: -e hcloud_server_name=my-server
 
   vars:
-    hcloud_server_name: "mount-doom"
+    hcloud_server_name: "{{ my_hetzner_config.name | default('my_hetzner_config.name must be configured in inventory/group_vars/all/vars.yml') }}"
 
   tasks:
     - name: Gather server info for {{ hcloud_server_name }}
       hetzner.hcloud.server_info:
-        api_token: "{{ my_hetzner_api_token }}"
+        api_token: "{{ my_hetzner_config.api_token }}"
         name: "{{ hcloud_server_name }}"
       register: server_info
 
@@ -24,7 +27,7 @@
 
     - name: Delete {{ hcloud_server_name }} on Hetzner Cloud
       hetzner.hcloud.server:
-        api_token: "{{ my_hetzner_api_token }}"
+        api_token: "{{ my_hetzner_config.api_token }}"
         name: "{{ hcloud_server_name }}"
         state: absent
 

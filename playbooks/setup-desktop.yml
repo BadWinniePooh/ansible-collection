@@ -4,7 +4,7 @@
   become: true
 
   vars:
-    ansible_user: "{{ my_ansible_user }}"
+    ansible_user: "{{ my_hetzner_config.ansible_user.name }}"
     desktop_user_names: "{{ desktop_users | map(attribute='name') | list }}"
 
   pre_tasks:

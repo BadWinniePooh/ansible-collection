@@ -47,6 +47,8 @@
 # | ccx53 |    32 | 128 GB| 600 GB |  0.219 |  137.27 |                    |
 # | ccx63 |    48 | 192 GB| 960 GB |  0.327 |  204.67 |                    |
 
+# Most probably this should be cx33 but for testing I start with the cheapes option.
 hcloud_default_type: "cx33"
 
 admin_user_on_fresh_system: "root"
+ansible_ssh_private_key_file: "~/.ssh/{{ my_hetzner_config.ssh_key.name }}"

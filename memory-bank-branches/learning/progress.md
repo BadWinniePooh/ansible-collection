@@ -18,6 +18,8 @@
 | 12 | Hetzner Cloud provisioning | `playbooks/provision_hetzner.yml`, `group_vars/hcloud_location/`, `group_vars/hcloud_type/` | done |
 | 13 | Deprovision Hetzner VM | `playbooks/deprovision_hetzner.yml` | done |
 | 14 | `ansible.builtin.apt` | `playbooks/manage_packages.yml` | done |
+| 15 | Remote desktop (XRDP) | `playbooks/setup-desktop.yml` | done |
+| 16 | Non-root admin user | `playbooks/setup-users.yml` | done |
 
 ## Key Concepts Learned
 
@@ -51,12 +53,15 @@
 - `cache_valid_time: 3600` skips `apt update` if cache is fresher than 1 hour
 - Packages pre-installed on Ubuntu 24.04 image: `vim`, `curl`, `htop` — not `tree`
 
+- `ansible_ssh_private_key_file` set in `group_vars/<group>/vars.yml` so Ansible uses the correct key for all hosts in that group
+- `direnv` + `.envrc` for project-scoped env vars — sets `ANSIBLE_CONFIG` automatically on `cd` into repo, unsets on `cd` away
+- Grouping related vars under a namespace dict (e.g. `my_hetzner_config.api_token`) avoids flat-var pollution and makes playbooks self-documenting
+- Inventory group name is a design choice — use domain-meaningful names (e.g. `mordor`) not generic ones (e.g. `webservers`)
+
 ## Remaining Roadmap
 
 | # | Topic | Notes |
 |---|---|---|
-| 15 | Remote desktop (XRDP) | `playbooks/setup_remote_desktop.yml` | done |
-| 16 | Non-root admin user | `playbooks/create_admin_user.yml` | done |
 | 17 | Real template deploy | `ansible.builtin.template` with `dest:` on live host |
 | 18 | Server hardening playbook | SSH config, firewall, unattended-upgrades |
 | 19 | Dynamic inventory | Hetzner Cloud plugin |

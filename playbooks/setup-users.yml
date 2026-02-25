@@ -7,12 +7,12 @@
     ansible_user: "{{ admin_user_on_fresh_system }}"
 
     console_users:
-      - name: "{{ my_ansible_user }}"
-        password: "{{ my_ansible_user_password | default('my_ansible_user_password must be configured in inventory/group_vars/all/vault.yml') }}"
+      - name: "{{ my_hetzner_config.ansible_user.name }}"
+        password: "{{ my_hetzner_config.ansible_user.password | default('my_hetzner_config.ansible_user.password must be configured in inventory/group_vars/all/vault.yml') }}"
 
     all_users: "{{ console_users + desktop_users }}"
 
-    ssh_public_key: "{{ my_ssh_public_key | default('my_ssh_public_key must be configured in inventory/group_vars/all/vault.yml') }}"
+    ssh_public_key: "{{ my_hetzner_config.ssh_key.public_value | default('my_hetzner_config.ssh_key.public_value must be configured in inventory/group_vars/all/vault.yml') }}"
 
   handlers:
     - name: Restart SSH
@@ -35,8 +35,8 @@
     - name: Allow passwordless sudo for ansible user
       lineinfile:
         path: /etc/sudoers.d/50-ansible-user-does-not-need-password
-        regexp: '^{{ my_ansible_user }}'
-        line: '{{ my_ansible_user }} ALL=(ALL) NOPASSWD:ALL'
+        regexp: '^{{ my_hetzner_config.ansible_user.name }}'
+        line: '{{ my_hetzner_config.ansible_user.name }} ALL=(ALL) NOPASSWD:ALL'
         validate: 'visudo -cf %s'
         create: yes
         state: present

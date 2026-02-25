@@ -6,9 +6,17 @@
 
 ## Session State
 
-Iteration 16 complete. Non-root user `sauron` created with vaulted password, SSH key, and sudo. Inventory updated — root no longer used.
-Project restructured: `inventories/dev/` flattened to `inventories/`, new `provisioners/`, `configurations/`, `tasks/` layout. Entry points: `provision.yml` and `destroy.yml`.
-Ready for iteration 17: real template deploy with `ansible.builtin.template`.
+Infrastructure fixes applied this session (no new iteration number — these are corrections):
+- `inventories/hosts.ini` recreated (was lost during iter-16 restructure); auto-written by provisioner
+- `ANSIBLE_CONFIG` now managed via `direnv` + `.envrc` (not hardcoded in `~/.zshrc`)
+- `ansible_ssh_private_key_file` added to `group_vars/hcloud_type/vars.yml`
+- Flat `my_*` vars in `group_vars/all/vars.yml` consolidated into `my_hetzner_config` dict
+- Inventory group renamed from `webservers` to `mordor`; provisioner writes it dynamically
+- `.gitignore` created
+- `hetzner-linux-down.yml` reset-placeholder task uncommented and updated
+- `setup-desktop.yml` running (install minimal GNOME desktop task in progress on mount-doom)
+
+Ready for iteration 17 once `configure-linux.yml` finishes successfully.
 
 ## Immediate Next Step
 
@@ -19,7 +27,7 @@ Render a Jinja2 template using gathered facts and deploy it to `mount-doom` usin
 ## Open Items / Decisions Pending
 
 - Vault password strategy: still `--ask-vault-pass`; `~/.vault_pass` file later
-- `web01` placeholder line still in `hosts.ini` (harmless, can clean up on commit)
+- `direnv allow` must be run once in WSL after `sudo apt install direnv` + hook in `~/.zshrc`
 
 ## Git Notes
 

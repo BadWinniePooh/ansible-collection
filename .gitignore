@@ -1,0 +1,10 @@
+# Ansible
+*.retry
+.vault_pass
+
+# direnv cache
+.direnv/
+
+# Python
+__pycache__/
+*.pyc

@@ -16,11 +16,20 @@
 - `pipx` installs `ansible-core` into an isolated venv at `~/.local/pipx/venvs/ansible-core/`
 - All CLI tools (`ansible`, `ansible-playbook`, etc.) are symlinked to `~/.local/bin/`
 - `~/.local/bin` is on PATH via `~/.zshrc`
-- `ANSIBLE_CONFIG` must be exported explicitly due to WSL world-writable mount:
-  ```zsh
-  export ANSIBLE_CONFIG=/mnt/c/Users/NRueber/source/repos/private/ansible/ansible.cfg
+- `ANSIBLE_CONFIG` must be exported explicitly due to WSL world-writable mount.
+  Managed via `direnv` + `.envrc` in the repo root (not hardcoded in `~/.zshrc`):
+  ```bash
+  # .envrc (committed to repo)
+  export ANSIBLE_CONFIG="$(pwd)/ansible.cfg"
   ```
-  This is set in `~/.zshrc`.
+  Prerequisites (one-time WSL setup):
+  ```bash
+  sudo apt install direnv
+  echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+  source ~/.zshrc
+  direnv allow   # run once in repo root
+  ```
+  `ANSIBLE_CONFIG` is then set automatically on `cd` into the repo and unset on `cd` away.
 
 ## Repository
 

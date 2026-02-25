@@ -56,7 +56,7 @@ ansible/
 - Variables: `snake_case`
 - Vault secrets: prefixed with `vault_` (e.g. `vault_db_password`)
 - Plain wrapper variable: same name without prefix (e.g. `db_password`)
-- Colleague-convention secrets: prefixed with `my_` (e.g. `my_hetzner_api_token`)
+- Colleague-convention secrets: prefixed with `my_` (e.g. `my_hetzner_config.api_token`)
 
 ### Vault Pattern
 ```
