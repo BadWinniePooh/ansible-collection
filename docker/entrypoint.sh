@@ -45,12 +45,8 @@ if [[ -z "${PLAYBOOK:-}" ]]; then
   echo "    ansible-runner \\"
   echo "    [--extra-vars \"key=value\"] [--tags tag1,tag2] [...]"
   echo ""
-  echo "Available top-level playbooks:"
-  find /ansible -maxdepth 2 -name '*.yml' \
-    ! -path '*/memory-bank-branches/*' \
-    ! -path '*/group_vars/*' \
-    ! -path '*/host_vars/*' \
-    ! -path '*/tasks/*' \
+  echo "Available playbooks:"
+  find /ansible -maxdepth 1 -name '*.yml' \
     ! -name 'requirements.yml' \
     | sed 's|^/ansible/||' | sort
   echo ""
