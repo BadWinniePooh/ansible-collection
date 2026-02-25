@@ -4,6 +4,15 @@ set -euo pipefail
 VAULT_FILE="/ansible/inventories/group_vars/all/vault.yml"
 SSH_KEY="/root/.ssh/hetzner_ansible"
 
+if [[ -z "${ANSIBLE_VAULT_PASSWORD_FILE:-}" ]]; then
+  echo ""
+  echo "WARNING: ANSIBLE_VAULT_PASSWORD_FILE is not set. Plays that use vault will fail."
+  echo "Pass it with:"
+  echo "  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass"
+  echo "  -v /path/to/vault.password:/vault_pass:ro"
+  echo ""
+fi
+
 if [[ ! -f "$VAULT_FILE" ]]; then
   echo ""
   echo "WARNING: vault.yml is not mounted. Plays that reference vault variables will fail."

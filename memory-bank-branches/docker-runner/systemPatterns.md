@@ -50,7 +50,8 @@ exec ansible-playbook "$PLAYBOOK" "$@"
 # Basic run
 docker run --rm \
   -e PLAYBOOK=provision.yml \
-  -v ~/.vault_pass:/vault_pass:ro \
+  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass \
+  -v ~/vault.password:/vault_pass:ro \
   -v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
   -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
@@ -59,7 +60,8 @@ docker run --rm \
 # With extra-vars and tags
 docker run --rm \
   -e PLAYBOOK=provision.yml \
-  -v ~/.vault_pass:/vault_pass:ro \
+  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass \
+  -v ~/vault.password:/vault_pass:ro \
   -v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
   -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
@@ -72,7 +74,7 @@ docker run --rm \
 
 | What | Mount path in container | How |
 |---|---|---|
-| Vault password | `/vault_pass` | `-v ~/.vault_pass:/vault_pass:ro` |
+| Vault password | `/vault_pass` | `-v ~/vault.password:/vault_pass:ro` + `-e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass` |
 | Vault secrets file | `/ansible/inventories/group_vars/all/vault.yml` | `-v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro` |
 | SSH private key | `/root/.ssh/hetzner_ansible` | `-v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro` |
 | SSH public key | `/root/.ssh/hetzner_ansible.pub` | `-v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro` |

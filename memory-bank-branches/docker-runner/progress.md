@@ -8,6 +8,7 @@
 | 1 | Dockerfile + entrypoint | `docker/Dockerfile`, `docker/entrypoint.sh`, `.dockerignore` | done |
 | 2 | Build verification | `docker build` clean, entrypoint error + playbook list verified | done |
 | 3 | Run a real playbook | `destroy.yml` via `docker run` with vault + extra-vars, WSL Docker fixed | done |
+| 4 | README / usage docs | `docker/README.md`, entrypoint ANSIBLE_VAULT_PASSWORD_FILE check added | done |
 
 ## Key Concepts (docker-runner)
 
@@ -28,6 +29,8 @@
 - `--extra-vars "key=value"` passed as CMD args flows correctly through `"$@"` in the entrypoint
 - Running from WSL is required — PowerShell misinterprets `--` flags as operators
 - `changed=0` on destroy when server already gone — idempotent, correct behaviour
+- `ANSIBLE_VAULT_PASSWORD_FILE` commented out in Dockerfile — must be passed explicitly via `-e` at runtime (no default in image)
+- Docker security warning on `ENV` for `ANSIBLE_VAULT_PASSWORD_FILE` is a false positive (it's a file path, not a secret) — but removing it from the image default is cleaner practice
 
 ## Remaining Roadmap
 

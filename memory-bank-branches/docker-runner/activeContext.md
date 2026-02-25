@@ -6,17 +6,17 @@
 
 ## Session State
 
-Iteration 3 complete:
-- `destroy.yml` run via `docker run` from WSL with vault.yml + vault_pass mounts and `--extra-vars`
-- WSL Docker access fixed via Rancher Desktop WSL integration toggle
-- Confirmed `"$@"` in entrypoint correctly forwards extra-vars to ansible-playbook
+Iteration 4 complete:
+- `docker/README.md` written with build + run + mounts + env vars reference
+- `entrypoint.sh` updated to warn when `ANSIBLE_VAULT_PASSWORD_FILE` is not set
+- `ANSIBLE_VAULT_PASSWORD_FILE` confirmed removed from Dockerfile default; passed explicitly at runtime
+- Provision run verified end-to-end: `ok=11` on localhost, `ok=23 changed=17` on mount-doom
 
 ## Immediate Next Step
 
-**Iteration 4 — README / usage docs**
+**Iteration 5 — CI/CD foundation (optional)**
 
-Write a `docker/README.md` documenting how to build the image and run any playbook,
-including the required runtime mounts and common examples.
+Or declare the docker-runner scope complete. Discuss with learner.
 
 ## Open Items / Decisions Pending
 
