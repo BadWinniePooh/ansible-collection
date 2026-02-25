@@ -61,6 +61,30 @@ docker run --rm \
   --extra-vars "provider=hetzner platform=linux"
 ```
 
+### Detached mode (background)
+
+Add `-d` and `--name` to run the playbook in the background and return immediately:
+
+```bash
+docker run -d --rm \
+  --name ansible-provision \
+  -e PLAYBOOK=provision.yml \
+  -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
+  -v ~/vault.password:/vault_pass:ro \
+  -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
+  -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
+  ansible-runner \
+  --extra-vars "provider=hetzner platform=linux"
+```
+
+Follow the output:
+
+```bash
+docker logs -f ansible-provision
+```
+
+> `--rm` still applies in detached mode — the container is removed automatically when the playbook finishes.
+
 ---
 
 ## Required runtime mounts
