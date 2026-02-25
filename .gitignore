@@ -3,6 +3,7 @@
 
 ### Ansible ###
 *.retry
+*.ini
 
 ### direnv ###
 .direnv
