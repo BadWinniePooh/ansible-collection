@@ -17,6 +17,8 @@ if [[ -z "${PLAYBOOK:-}" ]]; then
     ! -path '*/memory-bank-branches/*' \
     ! -path '*/group_vars/*' \
     ! -path '*/host_vars/*' \
+    ! -path '*/tasks/*' \
+    ! -name 'requirements.yml' \
     | sed 's|^/ansible/||' | sort
   echo ""
   exit 1

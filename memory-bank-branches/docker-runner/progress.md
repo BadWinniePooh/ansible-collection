@@ -6,6 +6,7 @@
 |---|---|---|---|
 | — | memory-bank-branch created | `memory-bank-branches/docker-runner/` | done |
 | 1 | Dockerfile + entrypoint | `docker/Dockerfile`, `docker/entrypoint.sh`, `.dockerignore` | done |
+| 2 | Build verification | `docker build` clean, entrypoint error + playbook list verified | done |
 
 ## Key Concepts (docker-runner)
 
@@ -18,12 +19,14 @@
 - Entrypoint prepends `/ansible/` to `$PLAYBOOK` so user only needs to pass e.g. `provision.yml`
 - Entrypoint lists available playbooks if `PLAYBOOK` is unset — helpful error UX
 - `.dockerignore` excludes `.git`, `memory-bank-branches/`, `.envrc` to keep image clean
+- `requirements.yml` and `tasks/` files must be excluded from entrypoint playbook listing — they are not runnable playbooks
+- Entrypoint args (`$@`) are passed to `ansible-playbook` after the playbook path — overriding entrypoint needed to run arbitrary container commands
 
 ## Remaining Roadmap
 
 | # | Topic | Notes |
 |---|---|---|
-| 2 | Build verification | `docker build`, inspect layers, confirm ansible runs |
 | 3 | Run a real playbook | `docker run` with PLAYBOOK + vault mount |
 | 4 | README / usage docs | Document build + run commands |
 | 5 | CI/CD foundation (optional) | GitHub Actions or similar |
+

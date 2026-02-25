@@ -6,18 +6,18 @@
 
 ## Session State
 
-Iteration 1 complete:
-- `docker/Dockerfile` — Ubuntu 22.04, pipx, ansible-core 2.17.14, hcloud + passlib, hetzner.hcloud collection
-- `docker/entrypoint.sh` — validates PLAYBOOK env var, lists available playbooks on error, execs ansible-playbook
-- `.dockerignore` — excludes .git, memory-bank-branches/, .envrc
+Iteration 2 complete:
+- `docker build` succeeded (all layers cached on second run)
+- Entrypoint error + available playbook listing verified
+- Fixed entrypoint `find` to exclude `tasks/` and `requirements.yml` from listing
 
 ## Immediate Next Step
 
-**Iteration 2 — Build verification**
+**Iteration 3 — Run a real playbook**
 
-Run `docker build -t ansible-runner -f docker/Dockerfile .` and verify the image
-builds cleanly, ansible-playbook is available, and the entrypoint error message
-works (run with no PLAYBOOK set).
+Rebuild image with entrypoint fix, then do a real `docker run` with `PLAYBOOK` set
+and vault password file mounted. A good first target: `provision.yml` or a
+non-destructive playbook like `playbooks/manage_packages.yml` against a live host.
 
 ## Open Items / Decisions Pending
 
