@@ -21,8 +21,10 @@ ENV PATH="/root/.local/bin:$PATH"
 RUN pipx install ansible-core==2.17.14 \
   && pipx inject ansible-core hcloud passlib
 
-# Install Ansible collections
-RUN ansible-galaxy collection install hetzner.hcloud
+# Install Ansible collections declared in requirements.yml
+# Copy requirements first so this layer is cached independently of other repo changes
+COPY requirements.yml /tmp/requirements.yml
+RUN ansible-galaxy collection install -r /tmp/requirements.yml
 
 # Point Ansible at the baked-in config (no direnv needed in container)
 ENV ANSIBLE_CONFIG=/ansible/ansible.cfg
