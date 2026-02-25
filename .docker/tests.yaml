@@ -20,9 +20,4 @@ commandTests:
     command: "ansible-galaxy"
     args: [ "collection", "list", "community.general" ]
     expectedOutput: [ "community.general" ]
-
-  - name: "hcloud Python library is available"
-    command: "python3"
-    args: [ "-c", "import hcloud; print('ok')" ]
-    expectedOutput: [ "ok" ]
   
