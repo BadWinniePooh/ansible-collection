@@ -5,6 +5,7 @@
 # Memory bank & docs — session context, not needed at runtime
 memory-bank-branches/
 docs/
+*.md
 
 # Dockerfiles — not needed at runtime
 Dockerfile
