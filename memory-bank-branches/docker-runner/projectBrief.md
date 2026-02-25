@@ -18,7 +18,6 @@ inside a container — no local Ansible installation required on the host.
 ```bash
 docker run --rm \
   -e PLAYBOOK=provision.yml \
-  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass \
   -v ~/vault.password:/vault_pass:ro \
   -v /path/to/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \

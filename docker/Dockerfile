@@ -29,9 +29,6 @@ RUN ansible-galaxy collection install -r /tmp/requirements.yml
 # Point Ansible at the baked-in config (no direnv needed in container)
 ENV ANSIBLE_CONFIG=/ansible/ansible.cfg
 
-# Vault password is supplied at runtime via a mounted file
-ENV ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass
-
 WORKDIR /ansible
 
 # Copy the entire repo into the image

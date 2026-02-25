@@ -40,7 +40,6 @@ All `docker run` commands must be executed from the **repo root in WSL** (not Po
 ```bash
 docker run --rm \
   -e PLAYBOOK=provision.yml \
-  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass \
   -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
@@ -54,7 +53,6 @@ docker run --rm \
 ```bash
 docker run --rm \
   -e PLAYBOOK=destroy.yml \
-  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass \
   -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
@@ -83,7 +81,7 @@ All mounts use `:ro` (read-only). **None of these files are baked into the image
 | Variable | Required | Description |
 |---|---|---|
 | `PLAYBOOK` | Yes | Path to the playbook relative to repo root (e.g. `provision.yml`) |
-| `ANSIBLE_VAULT_PASSWORD_FILE` | Yes (if vault used) | Path to vault password file inside the container (e.g. `/vault_pass`) |
+| `ANSIBLE_VAULT_PASSWORD_FILE` | No | Defaults to `/vault_pass`. Override only if you mount the password file at a different path. |
 
 ---
 

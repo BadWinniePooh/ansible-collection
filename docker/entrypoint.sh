@@ -3,13 +3,16 @@ set -euo pipefail
 
 VAULT_FILE="/ansible/inventories/group_vars/all/vault.yml"
 SSH_KEY="/root/.ssh/hetzner_ansible"
+VAULT_PASS="/vault_pass"
 
-if [[ -z "${ANSIBLE_VAULT_PASSWORD_FILE:-}" ]]; then
+# Default vault password file location — override with -e ANSIBLE_VAULT_PASSWORD_FILE=...
+export ANSIBLE_VAULT_PASSWORD_FILE="${ANSIBLE_VAULT_PASSWORD_FILE:-$VAULT_PASS}"
+
+if [[ ! -f "$ANSIBLE_VAULT_PASSWORD_FILE" ]]; then
   echo ""
-  echo "WARNING: ANSIBLE_VAULT_PASSWORD_FILE is not set. Plays that use vault will fail."
-  echo "Pass it with:"
-  echo "  -e ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass"
-  echo "  -v /path/to/vault.password:/vault_pass:ro"
+  echo "WARNING: vault password file not found at ${ANSIBLE_VAULT_PASSWORD_FILE}."
+  echo "Plays that use vault will fail. Mount it with:"
+  echo "  -v ~/vault.password:${VAULT_PASS}:ro"
   echo ""
 fi
 
