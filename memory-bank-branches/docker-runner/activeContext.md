@@ -6,18 +6,17 @@
 
 ## Session State
 
-Iteration 2 complete:
-- `docker build` succeeded (all layers cached on second run)
-- Entrypoint error + available playbook listing verified
-- Fixed entrypoint `find` to exclude `tasks/` and `requirements.yml` from listing
+Iteration 3 complete:
+- `destroy.yml` run via `docker run` from WSL with vault.yml + vault_pass mounts and `--extra-vars`
+- WSL Docker access fixed via Rancher Desktop WSL integration toggle
+- Confirmed `"$@"` in entrypoint correctly forwards extra-vars to ansible-playbook
 
 ## Immediate Next Step
 
-**Iteration 3 — Run a real playbook**
+**Iteration 4 — README / usage docs**
 
-Rebuild image with entrypoint fix, then do a real `docker run` with `PLAYBOOK` set
-and vault password file mounted. A good first target: `provision.yml` or a
-non-destructive playbook like `playbooks/manage_packages.yml` against a live host.
+Write a `docker/README.md` documenting how to build the image and run any playbook,
+including the required runtime mounts and common examples.
 
 ## Open Items / Decisions Pending
 
