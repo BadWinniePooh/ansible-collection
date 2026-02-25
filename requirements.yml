@@ -9,3 +9,5 @@ collections:
     # Python SDK also required — see requirements.txt
 
   - name: ansible.posix
+
+  - name: community.general

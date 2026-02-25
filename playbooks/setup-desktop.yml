@@ -30,7 +30,9 @@
     - name: Install console utilities
       apt:
         name:
+          - curl
           - tree
+          - unzip
         state: present
       notify: Cleanup apt cache
 
@@ -48,7 +50,6 @@
         name:
           - build-essential
           - gh
-          - keepassxc
           - libsecret-tools
           - seahorse
         state: present
@@ -58,8 +59,37 @@
       apt:
         name:
           - dotnet-sdk-8.0
+          - dotnet-sdk-10.0
         state: present
       notify: Cleanup apt cache
+
+    - name: Install fnm (Fast Node Manager) for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://fnm.vercel.app/install | bash
+        creates: "/home/{{ item }}/.local/share/fnm/fnm"
+      become_user: "{{ item }}"
+      loop: "{{ desktop_user_names }}"
+
+    - name: Install Node 24 via fnm for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.shell:
+        cmd: ~/.local/share/fnm/fnm install 24
+      register: fnm_node_install
+      changed_when: "'Downloading' in fnm_node_install.stdout"
+      become_user: "{{ item }}"
+      loop: "{{ desktop_user_names }}"
+
+    - name: Install Claude Code CLI for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://claude.ai/install.sh | bash
+        creates: "/home/{{ item }}/.local/bin/claude"
+      become_user: "{{ item }}"
+      loop: "{{ desktop_user_names }}"
+
+    - name: Install VS Code
+      community.general.snap:
+        name: code
+        classic: true
+        state: present
 
     - name: Remove GNOME remote desktop
       apt:
