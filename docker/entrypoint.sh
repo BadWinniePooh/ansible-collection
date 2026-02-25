@@ -2,12 +2,23 @@
 set -euo pipefail
 
 VAULT_FILE="/ansible/inventories/group_vars/all/vault.yml"
+SSH_KEY="/root/.ssh/hetzner_ansible"
 
 if [[ ! -f "$VAULT_FILE" ]]; then
   echo ""
   echo "WARNING: vault.yml is not mounted. Plays that reference vault variables will fail."
   echo "Mount it with:"
   echo "  -v /path/to/your/vault.yml:${VAULT_FILE}:ro"
+  echo ""
+fi
+
+if [[ ! -f "$SSH_KEY" ]]; then
+  echo ""
+  echo "WARNING: SSH key not found at ${SSH_KEY}."
+  echo "Plays that connect to managed nodes will fail."
+  echo "Mount your host key with:"
+  echo "  -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro"
+  echo "  -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro"
   echo ""
 fi
 
