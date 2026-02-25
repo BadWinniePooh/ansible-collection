@@ -35,6 +35,6 @@ WORKDIR /ansible
 COPY . /ansible
 
 # Make entrypoint executable
-RUN chmod +x /ansible/docker/entrypoint.sh
+RUN chmod +x /ansible/.docker/entrypoint.sh
 
-ENTRYPOINT ["/ansible/docker/entrypoint.sh"]
+ENTRYPOINT ["/ansible/.docker/entrypoint.sh"]
