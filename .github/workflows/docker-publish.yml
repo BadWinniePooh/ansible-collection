@@ -137,4 +137,4 @@ jobs:
         run: |
           container-structure-test test \
             --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-            --config .devcontainer/tests.yaml
+            --config .docker/tests.yaml
