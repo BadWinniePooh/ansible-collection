@@ -2,8 +2,12 @@
 .git
 .gitignore
 
-# Memory bank — session context, not needed at runtime
+# Memory bank & docs — session context, not needed at runtime
 memory-bank-branches/
+docs/
+
+# Dockerfiles — not needed at runtime
+Dockerfile
 
 # Ansible Vault secrets — must be mounted at runtime, never baked in
 **/vault.yml
