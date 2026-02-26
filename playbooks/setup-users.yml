@@ -12,7 +12,7 @@
 
     all_users: "{{ console_users + desktop_users }}"
 
-    ssh_public_key: "{{ my_hetzner_config.ssh_key.public_value | default('my_hetzner_config.ssh_key.public_value must be configured in inventory/group_vars/all/vault.yml') }}"
+    ssh_public_key: "{{ lookup('file', '~/.ssh/' + my_hetzner_config.ssh_key.name + '.pub') }}"
 
   handlers:
     - name: Restart SSH
