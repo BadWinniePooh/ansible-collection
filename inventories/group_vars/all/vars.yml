@@ -9,7 +9,6 @@ my_hetzner_config:
   api_token: "{{ vault_hetzner_secrets.api_token }}"
   ssh_key:
     name: "{{ vault_hetzner_secrets.ssh_key.name }}"
-    public_value: "{{ vault_hetzner_secrets.ssh_key.public_value }}"
   ansible_user:
     name: "morgoth"
     password: "{{ vault_hetzner_secrets.ansible_user.password }}"
