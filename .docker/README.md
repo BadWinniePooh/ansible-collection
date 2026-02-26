@@ -119,6 +119,36 @@ docker run --rm ansible-runner
 
 ---
 
+## Verify image signature
+
+Every image pushed to `ghcr.io` is signed with [cosign](https://github.com/sigstore/cosign)
+using **keyless signing** — no static key is stored anywhere. The signature is bound to
+the GitHub Actions OIDC identity of this repo's workflow.
+
+Install cosign:
+
+```bash
+brew install cosign        # macOS / WSL with brew
+# or: https://github.com/sigstore/cosign/releases
+```
+
+Verify:
+
+```bash
+cosign verify \
+  --certificate-identity "https://github.com/BadWinniePooh/ansible-private-test/.github/workflows/docker-publish.yml@refs/heads/main" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+  ghcr.io/badwinniepooh/ansible-runner:latest
+```
+
+A successful verification prints the signing certificate fields and the Rekor transparency log entry.
+If the image was tampered with or signed by a different workflow, cosign exits non-zero.
+
+> **Tip:** the exact `--certificate-identity` value is printed in the cosign error message if you
+> get it wrong — use that output to copy the correct subject.
+
+---
+
 ## Notes
 
 - Extra flags (`--extra-vars`, `--tags`, `--check`, etc.) are passed directly
