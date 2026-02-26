@@ -4,7 +4,7 @@ commandTests:
   - name: "ansible-playbook is available"
     command: "ansible-playbook"
     args: [ "--version" ]
-    expectedOutput: [ "ansible-playbook \\[core 2\\.17\\." ]
+    expectedOutput: [ "ansible-playbook \\[core 2\\.20\\." ]
 
   - name: "hetzner.hcloud collection is installed"
     command: "ansible-galaxy"
