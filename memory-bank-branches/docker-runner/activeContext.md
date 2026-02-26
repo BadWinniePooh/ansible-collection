@@ -6,22 +6,23 @@
 
 ## Session State
 
-Iteration 5 complete. Iteration 6 starting — image size optimisation via multi-stage build.
+Iterations 5 and 6 complete. Starting iteration 9 (pulled forward) — dynamic inventory.
 
-Iteration 5 delivered:
-- Base image upgraded from `ubuntu:22.04` to `ubuntu:24.04` (Python 3.12)
-- `ansible-core` bumped to `2.20.3` (requires Python >=3.12, now satisfied)
-- `pipx` installed via apt to avoid PEP 668 failure on Ubuntu 24.04
-- `pipx inject -r` replaced with `pipx runpip ansible-core install -r` — keeps `requirements.txt` as single source of truth
-- `tests.yaml` version regex updated from `2\.17\.` to `2\.20\.`
-- Renovate confirmed to already handle GitHub Actions SHA pinning natively via `config:recommended`
-- CI/CD pipeline verified end-to-end
+Iteration 6 delivered:
+- `.docker/Dockerfile` converted to multi-stage build: `builder` stage installs all tooling; `runtime` stage copies only `/root/.local` and `/root/.ansible` — no compilers/pip/git in final image
+- Docker section added to repo root `README.md`
+
+Also completed (branch `fix/ansible-deprecation-warnings`):
+- `local_action` mapping syntax replaced with `delegate_to: localhost` + FQCN in `tasks/add-server-to-known-hosts.yml`
+- `ansible_python_interpreter: /usr/bin/python3` added to `group_vars/all/vars.yml` — silences interpreter auto-discovery warning
 
 ## Immediate Next Step
 
-Iteration 6: convert `.docker/Dockerfile` to a multi-stage build.
-- Stage 1 (`builder`): install all build-time deps, pipx, ansible-core, collections
-- Stage 2 (`runtime`): copy only the pipx venv, collections, and playbooks — no compilers, no apt package cache
+Iteration 9: replace `inventories/hosts.ini` static inventory with the `hetzner.hcloud.hcloud` dynamic inventory plugin.
+- Remove `<PLACEHOLDER>` IP pattern and manual `hosts.ini` updates from provision/destroy workflow
+- Configure the plugin to discover servers by label or group matching existing Hetzner Cloud setup
+- Update `ansible.cfg` inventory path accordingly
+- Verify `provision.yml` and `destroy.yml` still work end-to-end
 
 ## Open Items / Decisions Pending
 
