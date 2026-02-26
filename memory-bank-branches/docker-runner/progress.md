@@ -10,6 +10,7 @@
 | 3 | Run a real playbook | `destroy.yml` via `docker run` with vault + extra-vars, WSL Docker fixed | done |
 | 4 | README / usage docs | `.docker/README.md`, entrypoint ANSIBLE_VAULT_PASSWORD_FILE check added | done |
 | 5 | CI/CD foundation | `.github/workflows/docker-publish.yml`, `.docker/tests.yaml`, multi-platform build, cosign signing, ubuntu:24.04 upgrade | done |
+| 6 | Image size optimisation | `.docker/Dockerfile` multi-stage build — builder + runtime stages | done |
 
 ## Key Concepts (docker-runner)
 

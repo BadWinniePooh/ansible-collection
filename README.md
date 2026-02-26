@@ -81,7 +81,7 @@ This provisions a Hetzner VM (`provisioners/hetzner-linux-up.yml`) and then conf
 ansible-playbook ./destroy.yml --extra-vars "provider=hetzner platform=linux" --ask-vault-pass
 ```
 
-Deletes the server, cleans `known_hosts`, and resets the IP in `inventories/hosts.ini` to `<PLACEHOLDER>`.
+Deletes the server and cleans `known_hosts`. The dynamic inventory plugin automatically reflects the removed server on the next run.
 
 ---
 
@@ -135,7 +135,7 @@ ansible/
 ├── requirements.txt           ← Python package dependencies (pipx inject)
 ├── ansible.cfg
 ├── inventories/
-│   ├── hosts.ini
+│   ├── hcloud.yml     ← dynamic inventory (hetzner.hcloud.hcloud plugin)
 │   └── group_vars/
 │       ├── all/
 │       │   ├── vars.yml       ← plain variables (reference vault_ vars)
