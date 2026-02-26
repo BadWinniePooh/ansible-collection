@@ -36,9 +36,3 @@
         name: "{{ server_ip }}"
         state: absent
       when: server_ip is defined
-
-    - name: Reset hosts.ini entry to placeholder
-      ansible.builtin.lineinfile:
-        path: "{{ playbook_dir }}/../inventories/hosts.ini"
-        regexp: '^{{ hcloud_server_name }} ansible_host='
-        line: "{{ hcloud_server_name }} ansible_host=<PLACEHOLDER> ansible_user=root"

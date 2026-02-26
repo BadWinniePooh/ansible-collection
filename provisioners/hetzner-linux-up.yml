@@ -36,17 +36,7 @@
         ssh_keys: "{{ hcloud_ssh_key_name }}"
       register: hcloud
 
-    - name: Write hosts.ini with provisioned server IP
-      ansible.builtin.copy:
-        dest: "{{ playbook_dir }}/../inventories/hosts.ini"
-        content: |
-          [{{ hcloud_server_group }}]
-          {{ hcloud_server_name }} ansible_host={{ hcloud.hcloud_server.ipv4_address }}
-
-          [hcloud_type:children]
-          {{ hcloud_server_group }}
-
-    - name: Refresh inventory to ensure new host is available
+    - name: Refresh inventory so the new server is available for subsequent plays
       meta: refresh_inventory
 
     - import_tasks: ../tasks/add-server-to-known-hosts.yml

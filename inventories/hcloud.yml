@@ -1,0 +1,37 @@
+---
+# Dynamic inventory plugin for Hetzner Cloud
+#
+# The API token is stored as an inline Ansible Vault blob below.
+# No HCLOUD_TOKEN environment variable is needed.
+#
+# To regenerate the token blob (e.g. after rotating the token), run:
+#   ansible-vault encrypt_string 'YOUR_TOKEN_HERE' --name 'token'
+# and replace the `token: !vault |` block with the output.
+#
+# The plugin queries the Hetzner Cloud API at runtime, so no IP address or
+# server name needs to be maintained in a static file.
+plugin: hetzner.hcloud.hcloud
+
+token: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  61343336653535393934353130636236663333356236356238613063386131363064646638393737
+  6539356565393263356237353438363062323935346337620a396536373430313361656530623762
+  34646566373938653331616662386432623864653130323565613537373131323063326565373935
+  6263633034653464350a646661653234306662653838316665343065663165623536623131363266
+  37363335376238363832343733353861383535383365343831306465663836366361313535376561
+  35626231666662303762376338303761376432303063336236396433613734313362626463663364
+  62646433323933663537396434336466633263363636356437373838386562356234373736646538
+  36636331366338633432
+
+groups:
+  # Map all cloud servers into the hcloud_type group so that
+  # group_vars/hcloud_type/vars.yml (admin_user, ssh key, default type) is loaded.
+  hcloud_type: true
+  # Re-create the mordor group used by configure-linux.yml playbooks.
+  # Matches any server labelled platform=linux (set by hetzner-linux-up.yml).
+  mordor: "labels.platform is defined and labels.platform == 'linux'"
+
+compose:
+  # Use root for the initial connection (same as the static hosts.ini entry).
+  # After setup-users.yml runs, ansible_user can be switched to the ansible user.
+  ansible_user: "'root'"
