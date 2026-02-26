@@ -20,7 +20,7 @@ ENV PATH="/root/.local/bin:$PATH"
 # Install ansible-core and required Python packages
 # Copy requirements.txt first so this layer is cached independently of other repo changes
 COPY requirements.txt /tmp/requirements.txt
-RUN pipx install ansible-core==2.17.14 \
+RUN pipx install ansible-core==2.20.3 \
   && pipx runpip ansible-core install -r /tmp/requirements.txt
 
 # Install Ansible collections declared in requirements.yml
