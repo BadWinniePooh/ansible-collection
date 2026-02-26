@@ -36,3 +36,9 @@
         name: "{{ server_ip }}"
         state: absent
       when: server_ip is defined
+
+    - name: Delete SSH key '{{ my_hetzner_config.ssh_key.name }}' from Hetzner Cloud
+      hetzner.hcloud.ssh_key:
+        api_token: "{{ my_hetzner_config.api_token }}"
+        name: "{{ my_hetzner_config.ssh_key.name }}"
+        state: absent
