@@ -102,6 +102,7 @@ All `docker run` commands must be executed from the **repo root in WSL** (not Po
 ```bash
 docker run --rm \
   -e PLAYBOOK=provision.yml \
+  -e HCLOUD_TOKEN=<your-hetzner-api-token> \
   -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \

@@ -40,6 +40,7 @@ All `docker run` commands must be executed from the **repo root in WSL** (not Po
 ```bash
 docker run --rm \
   -e PLAYBOOK=provision.yml \
+  -e HCLOUD_TOKEN=<your-hetzner-api-token> \
   -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
@@ -53,6 +54,7 @@ docker run --rm \
 ```bash
 docker run --rm \
   -e PLAYBOOK=destroy.yml \
+  -e HCLOUD_TOKEN=<your-hetzner-api-token> \
   -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
@@ -105,6 +107,7 @@ All mounts use `:ro` (read-only). **None of these files are baked into the image
 | Variable | Required | Description |
 |---|---|---|
 | `PLAYBOOK` | Yes | Path to the playbook relative to repo root (e.g. `provision.yml`) |
+| `HCLOUD_TOKEN` | Yes | Hetzner Cloud API token — required by the dynamic inventory plugin to discover servers |
 | `ANSIBLE_VAULT_PASSWORD_FILE` | No | Defaults to `/vault_pass`. Override only if you mount the password file at a different path. |
 
 ---
