@@ -6,8 +6,11 @@
 
 collections:
   - name: hetzner.hcloud
+    version: "6.7.0"
     # Python SDK also required — see requirements.txt
 
   - name: ansible.posix
+    version: "2.1.0"
 
   - name: community.general
+    version: "12.4.0"

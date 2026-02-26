@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "schedule": ["every weekend"],
+  "timezone": "Europe/Berlin",
+
+  "ansible-galaxy": {
+    "fileMatch": ["(^|/)requirements\\.yml$"]
+  },
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.docker/Dockerfile$"],
+      "matchStrings": [
+        "pipx install ansible-core==(?<currentValue>[^\\s\\\\\\n]+)"
+      ],
+      "datasourceTemplate": "pypi",
+      "depNameTemplate": "ansible-core"
+    }
+  ],
+
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "schedule": ["every weekend"]
+    },
+    {
+      "matchManagers": ["ansible-galaxy", "dockerfile", "custom.regex"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "non-major dependencies"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "addLabels": ["major-update"]
+    }
+  ]
+}
