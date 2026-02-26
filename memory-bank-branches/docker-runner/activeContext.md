@@ -6,19 +6,22 @@
 
 ## Session State
 
-Iteration 5 in progress:
-- `docker/` directory renamed to `.docker/`
-- Dockerfile updated: pinned `ansible-core==2.17.14`, added `python3-venv`, ENTRYPOINT path corrected to `/ansible/.docker/entrypoint.sh`
-- `entrypoint.sh` expanded: now checks for SSH key and vault.yml presence in addition to vault password
-- `.docker/tests.yaml` added: container-structure-test specs for `ansible-playbook --version`, `hetzner.hcloud`, `ansible.posix`, `community.general`
-- `.github/workflows/docker-publish.yml` added: builds multi-platform image (`linux/amd64` + `linux/arm64`), pushes to `ghcr.io/badwinniepooh/ansible-runner`, signs with cosign, runs container-structure-test matrix on both architectures
-- Several fix commits stabilising the workflow (permissions, entrypoint path, test content)
+Iteration 5 complete. Iteration 6 starting — image size optimisation via multi-stage build.
+
+Iteration 5 delivered:
+- Base image upgraded from `ubuntu:22.04` to `ubuntu:24.04` (Python 3.12)
+- `ansible-core` bumped to `2.20.3` (requires Python >=3.12, now satisfied)
+- `pipx` installed via apt to avoid PEP 668 failure on Ubuntu 24.04
+- `pipx inject -r` replaced with `pipx runpip ansible-core install -r` — keeps `requirements.txt` as single source of truth
+- `tests.yaml` version regex updated from `2\.17\.` to `2\.20\.`
+- Renovate confirmed to already handle GitHub Actions SHA pinning natively via `config:recommended`
+- CI/CD pipeline verified end-to-end
 
 ## Immediate Next Step
 
-Verify CI/CD pipeline passes end-to-end on GitHub Actions, then decide:
-- Declare Iteration 5 complete and docker-runner scope done, or
-- Continue with additional improvements (e.g. publish README badge, multi-stage build for size)
+Iteration 6: convert `.docker/Dockerfile` to a multi-stage build.
+- Stage 1 (`builder`): install all build-time deps, pipx, ansible-core, collections
+- Stage 2 (`runtime`): copy only the pipx venv, collections, and playbooks — no compilers, no apt package cache
 
 ## Open Items / Decisions Pending
 

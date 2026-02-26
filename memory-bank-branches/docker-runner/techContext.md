@@ -12,10 +12,10 @@
 
 | Property | Value |
 |---|---|
-| Base image | `ubuntu:22.04` (mirrors existing control node distro) |
+| Base image | `ubuntu:24.04` |
 | Ansible install | `pipx install ansible-core` |
-| Ansible version | Matches control node (core 2.17.x) |
-| Python | 3.10.x (Ubuntu 22.04 default) |
+| Ansible version | `ansible-core==2.20.3` |
+| Python | 3.12.x (Ubuntu 24.04 default) |
 | Working directory | `/ansible` |
 | Vault password mount | `-v <host_path>:/vault_pass:ro` |
 | Env var | `ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass` |
@@ -40,5 +40,5 @@
 ## Collections / Python Dependencies
 
 - `hetzner.hcloud` Ansible collection (installed at build time)
-- `hcloud` Python package (installed via pipx inject)
-- `passlib` Python package (installed via pipx inject)
+- `hcloud` Python package (installed via `pipx runpip ansible-core install -r requirements.txt`)
+- `passlib` Python package (installed via `pipx runpip ansible-core install -r requirements.txt`)

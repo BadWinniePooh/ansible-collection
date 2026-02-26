@@ -85,6 +85,46 @@ Deletes the server, cleans `known_hosts`, and resets the IP in `inventories/host
 
 ---
 
+## Docker
+
+No local Ansible installation required — run any playbook inside the pre-built container image from `ghcr.io`.
+
+### Build locally (optional)
+
+```bash
+docker build -t ansible-runner -f .docker/Dockerfile .
+```
+
+### Run a playbook
+
+All `docker run` commands must be executed from the **repo root in WSL** (not PowerShell).
+
+```bash
+docker run --rm \
+  -e PLAYBOOK=provision.yml \
+  -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
+  -v ~/vault.password:/vault_pass:ro \
+  -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
+  -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
+  ghcr.io/badwinniepooh/ansible-runner:latest \
+  --extra-vars "provider=hetzner platform=linux"
+```
+
+Replace `PLAYBOOK=provision.yml` with any playbook in the repo (e.g. `destroy.yml`).  
+Extra flags (`--tags`, `--check`, etc.) are appended after the image name and forwarded directly to `ansible-playbook`.
+
+### List available playbooks
+
+Run without `PLAYBOOK` set to see what's available:
+
+```bash
+docker run --rm ghcr.io/badwinniepooh/ansible-runner:latest
+```
+
+> Full reference (mounts, env vars, detached mode, signature verification): [`.docker/README.md`](.docker/README.md)
+
+---
+
 ## Project Structure
 
 ```
