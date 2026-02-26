@@ -21,6 +21,7 @@ ENV PATH="/root/.local/bin:$PATH"
 # Copy requirements.txt first so this layer is cached independently of other repo changes
 COPY requirements.txt /tmp/requirements.txt
 RUN pipx install ansible-core==2.17.14 \
+  && pipx upgrade pipx \
   && pipx inject ansible-core -r /tmp/requirements.txt
 
 # Install Ansible collections declared in requirements.yml
