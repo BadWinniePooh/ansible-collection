@@ -8,11 +8,12 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
-    pipx \
     git \
     openssh-client \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && pip3 install "pipx>=1.1.0" \
+  && pipx ensurepath
 
 # Ensure pipx-installed tools are on PATH
 ENV PATH="/root/.local/bin:$PATH"
@@ -21,7 +22,6 @@ ENV PATH="/root/.local/bin:$PATH"
 # Copy requirements.txt first so this layer is cached independently of other repo changes
 COPY requirements.txt /tmp/requirements.txt
 RUN pipx install ansible-core==2.17.14 \
-  && pipx upgrade pipx \
   && pipx inject ansible-core -r /tmp/requirements.txt
 
 # Install Ansible collections declared in requirements.yml
