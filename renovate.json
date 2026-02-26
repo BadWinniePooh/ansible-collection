@@ -1,18 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-
-  "schedule": ["every weekend"],
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": [
+    "every weekend"
+  ],
   "timezone": "Europe/Berlin",
-
   "ansible-galaxy": {
-    "fileMatch": ["(^|/)requirements\\.yml$"]
+    "managerFilePatterns": [
+      "/(^|/)requirements\\.yml$/"
+    ]
   },
-
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^\\.docker/Dockerfile$"],
+      "managerFilePatterns": [
+        "/^\\.docker/Dockerfile$/"
+      ],
       "matchStrings": [
         "pipx install ansible-core==(?<currentValue>[^\\s\\\\\\n]+)"
       ],
@@ -20,22 +25,37 @@
       "depNameTemplate": "ansible-core"
     }
   ],
-
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub Actions",
-      "schedule": ["every weekend"]
+      "schedule": [
+        "every weekend"
+      ]
     },
     {
-      "matchManagers": ["ansible-galaxy", "dockerfile", "pip_requirements", "custom.regex"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "ansible-galaxy",
+        "dockerfile",
+        "pip_requirements",
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "non-major dependencies"
     },
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "dependencyDashboardApproval": true,
-      "addLabels": ["major-update"]
+      "addLabels": [
+        "major-update"
+      ]
     }
   ]
 }
