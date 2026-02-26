@@ -6,22 +6,23 @@
 
 ## Session State
 
-Iteration 5 complete. Iteration 6 starting — image size optimisation via multi-stage build.
+Iteration 6 committed (branch `feature/multi-stage-build`), not yet merged to `main`.
+Deprecation fix committed (branch `fix/ansible-deprecation-warnings`), not yet merged to `main`.
 
-Iteration 5 delivered:
-- Base image upgraded from `ubuntu:22.04` to `ubuntu:24.04` (Python 3.12)
-- `ansible-core` bumped to `2.20.3` (requires Python >=3.12, now satisfied)
-- `pipx` installed via apt to avoid PEP 668 failure on Ubuntu 24.04
-- `pipx inject -r` replaced with `pipx runpip ansible-core install -r` — keeps `requirements.txt` as single source of truth
-- `tests.yaml` version regex updated from `2\.17\.` to `2\.20\.`
-- Renovate confirmed to already handle GitHub Actions SHA pinning natively via `config:recommended`
-- CI/CD pipeline verified end-to-end
+Iteration 6 delivered:
+- Multi-stage Dockerfile: `builder` stage installs all tooling; `runtime` stage copies only `/root/.local` (pipx venv) and `/root/.ansible` (collections) — no compilers or build tools in final image
+- Docker section added to repo root `README.md`
+
+Deprecation fix delivered (branch `fix/ansible-deprecation-warnings`):
+- `local_action` mapping syntax replaced with `delegate_to: localhost` + FQCN in `tasks/add-server-to-known-hosts.yml`
+- Silences both `DEPRECATION WARNING: Using a mapping for action` warnings ahead of ansible-core 2.23 removal
 
 ## Immediate Next Step
 
-Iteration 6: convert `.docker/Dockerfile` to a multi-stage build.
-- Stage 1 (`builder`): install all build-time deps, pipx, ansible-core, collections
-- Stage 2 (`runtime`): copy only the pipx venv, collections, and playbooks — no compilers, no apt package cache
+Merge open branches to `main`, verify CI passes, then proceed with roadmap:
+- Iteration 7: CI status badge in `README.md`
+- Iteration 8: Verify Renovate custom regex manager for `ansible-core`
+- Iteration 9: Dynamic inventory via `hetzner.hcloud.hcloud` plugin
 
 ## Open Items / Decisions Pending
 

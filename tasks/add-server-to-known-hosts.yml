@@ -27,17 +27,17 @@
     fail_msg: "The variable remote_ip must be defined and not empty"
 
 - name: "Scan for SSH host keys"
-  local_action:
-    module: shell
+  ansible.builtin.shell:
     cmd: ssh-keyscan "{{ remote_ip }}" | grep -v '^#'
+  delegate_to: localhost
   changed_when: False
   retries: 30
   delay: 10
   register: ssh_scan
 
 - name: "Update known_hosts"
-  local_action:
-    module: known_hosts
+  ansible.builtin.known_hosts:
     key: "{{ item }}"
     name: "{{ remote_ip }}"
+  delegate_to: localhost
   with_items: "{{ ssh_scan.stdout_lines }}"

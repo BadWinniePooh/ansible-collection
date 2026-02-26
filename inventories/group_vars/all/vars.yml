@@ -1,4 +1,9 @@
 ---
+# Pin the Python interpreter explicitly to suppress auto-discovery warnings.
+# Using the generic symlink /usr/bin/python3 is preferred over a versioned path
+# (e.g. python3.12) so this doesn't need updating when the system Python changes.
+ansible_python_interpreter: /usr/bin/python3
+
 greeting: "Hello from group_vars/all"
 db_password: "{{ vault_db_password }}"
 

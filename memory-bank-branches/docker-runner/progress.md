@@ -39,6 +39,8 @@
 - `pipx inject -r <file>` not supported in the apt-bundled pipx version on Ubuntu 24.04 — use `pipx runpip <venv> install -r <file>` to keep `requirements.txt` as single source of truth
 - `pipx runpip <venv> <pip-args>` runs pip inside a specific pipx-managed venv without hardcoding venv paths
 - `container-structure-test` version regex in `tests.yaml` must be updated when `ansible-core` major/minor version changes
+- `local_action: { module: ... }` (mapping syntax) deprecated since ansible-core 2.20, removed in 2.23 — use `delegate_to: localhost` + FQCN (`ansible.builtin.shell`, `ansible.builtin.known_hosts`, etc.)
+- Static `hosts.ini` with `<PLACEHOLDER>` IP triggers three `[WARNING]: inventory` log lines on every run after deprovisioning — root cause: ini parser rejects the placeholder as invalid; fix is dynamic inventory (`hetzner.hcloud.hcloud` plugin, iteration 9)
 - `container-structure-test` (Google) used to validate the built image against a YAML spec — runs inside CI, no Ansible install needed on the runner
 - GitHub Actions workflow: `build` job pushes to ghcr.io; `test` job runs on a matrix of `ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64)
 - cosign + sigstore Fulcio used to sign the pushed image digest — supply-chain security
@@ -52,7 +54,8 @@
 
 | # | Topic | Notes |
 |---|---|---|
-| 6 | Image size optimisation | Multi-stage build — strip build tools and apt cache from final image |
+| 6 | Image size optimisation | Multi-stage build — strip build tools and apt cache from final image; branch `feature/multi-stage-build` committed, not yet merged |
 | 7 | CI status badge | Add GitHub Actions workflow status badge to repo root `README.md` |
 | 8 | Renovate for `ansible-core` | Verify the custom regex manager in `renovate.json` correctly tracks `ansible-core` version in `.docker/Dockerfile` and opens PRs |
+| 9 | Dynamic inventory | Replace static `inventories/hosts.ini` with `hetzner.hcloud.hcloud` dynamic inventory plugin — eliminates `<PLACEHOLDER>` IP, removes three `[WARNING]: inventory` log lines on every run, and removes the need to manually update `hosts.ini` after provision/destroy |
 

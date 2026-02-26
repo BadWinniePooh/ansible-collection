@@ -17,6 +17,7 @@ A lightweight, reproducible Docker image that:
 
 ## Non-Goals (for now)
 
-- Dynamic inventory inside the container (deferred)
+- Dynamic inventory inside the container (deferred — planned as iteration 9; will replace static `hosts.ini` with the `hetzner.hcloud.hcloud` plugin)
+- Multi-stage builds for size optimisation (deferred — planned as iteration 6; branch exists)
 - Publishing to a container registry (deferred)
 - Multi-stage builds for size optimisation (deferred)
