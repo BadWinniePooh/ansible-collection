@@ -9,7 +9,7 @@
 | 2 | Build verification | `docker build` clean, entrypoint error + playbook list verified | done |
 | 3 | Run a real playbook | `destroy.yml` via `docker run` with vault + extra-vars, WSL Docker fixed | done |
 | 4 | README / usage docs | `.docker/README.md`, entrypoint ANSIBLE_VAULT_PASSWORD_FILE check added | done |
-| 5 | CI/CD foundation | `.github/workflows/docker-publish.yml`, `.docker/tests.yaml`, multi-platform build, cosign signing | in progress |
+| 5 | CI/CD foundation | `.github/workflows/docker-publish.yml`, `.docker/tests.yaml`, multi-platform build, cosign signing, ubuntu:24.04 upgrade | done |
 
 ## Key Concepts (docker-runner)
 
@@ -33,7 +33,12 @@
 - `ANSIBLE_VAULT_PASSWORD_FILE` commented out in Dockerfile — must be passed explicitly via `-e` at runtime (no default in image)
 - Docker security warning on `ENV` for `ANSIBLE_VAULT_PASSWORD_FILE` is a false positive (it's a file path, not a secret) — but removing it from the image default is cleaner practice
 - `docker/` renamed to `.docker/` — hidden directory keeps repo root cleaner
-- `ansible-core` version pinned in Dockerfile (`==2.17.14`) — reproducible builds
+- `ansible-core` version pinned in Dockerfile (`==2.20.3`) — reproducible builds
+- Ubuntu 24.04 ships Python 3.12; `ansible-core >=2.18` requires Python >=3.11, `>=2.20` requires Python >=3.12 — base image and version pin must stay in sync
+- Ubuntu 24.04 enforces PEP 668 (externally managed Python); `pip3 install pipx` fails — install `pipx` from apt instead
+- `pipx inject -r <file>` not supported in the apt-bundled pipx version on Ubuntu 24.04 — use `pipx runpip <venv> install -r <file>` to keep `requirements.txt` as single source of truth
+- `pipx runpip <venv> <pip-args>` runs pip inside a specific pipx-managed venv without hardcoding venv paths
+- `container-structure-test` version regex in `tests.yaml` must be updated when `ansible-core` major/minor version changes
 - `container-structure-test` (Google) used to validate the built image against a YAML spec — runs inside CI, no Ansible install needed on the runner
 - GitHub Actions workflow: `build` job pushes to ghcr.io; `test` job runs on a matrix of `ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64)
 - cosign + sigstore Fulcio used to sign the pushed image digest — supply-chain security
@@ -47,5 +52,7 @@
 
 | # | Topic | Notes |
 |---|---|---|
-| 5 | CI/CD foundation | Verify pipeline passes end-to-end; declare complete |
+| 6 | Image size optimisation | Multi-stage build — strip build tools and apt cache from final image |
+| 7 | CI status badge | Add GitHub Actions workflow status badge to repo root `README.md` |
+| 8 | Renovate for `ansible-core` | Verify the custom regex manager in `renovate.json` correctly tracks `ansible-core` version in `.docker/Dockerfile` and opens PRs |
 

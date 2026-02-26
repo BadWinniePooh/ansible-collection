@@ -18,7 +18,7 @@ ansible/
 ## Dockerfile Pattern
 
 ```
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -28,8 +28,9 @@ RUN apt-get update && apt-get install -y \
 
 ENV PATH="/root/.local/bin:$PATH"
 
-RUN pipx install ansible-core==2.17.14 \
-  && pipx inject ansible-core hcloud passlib
+COPY requirements.txt /tmp/requirements.txt
+RUN pipx install ansible-core==2.20.3 \
+  && pipx runpip ansible-core install -r /tmp/requirements.txt
 
 COPY requirements.yml /tmp/requirements.yml
 RUN ansible-galaxy collection install -r /tmp/requirements.yml
@@ -44,10 +45,12 @@ ENTRYPOINT ["/ansible/.docker/entrypoint.sh"]
 ```
 
 Key changes from original pattern:
+- Base image upgraded to `ubuntu:24.04` (Python 3.12)
+- `pipx` installed via apt — avoids PEP 668 "externally managed" error on Ubuntu 24.04
+- `pipx inject -r <file>` not supported in apt-bundled pipx; replaced with `pipx runpip <venv> install -r <file>`
+- `requirements.txt` is single source of truth for Python deps — no duplication in Dockerfile
+- `requirements.txt` copied before `RUN` for independent layer caching
 - `ansible-core` version pinned for reproducible builds
-- `python3-venv` added (required by pipx on some Ubuntu versions)
-- `requirements.yml` copied first so collection layer is cached independently
-- `apt-get clean` included to reduce image size
 - ENTRYPOINT uses absolute path inside the container
 
 ## Entrypoint Pattern
