@@ -6,17 +6,19 @@
 
 ## Session State
 
-Iteration 4 complete:
-- `docker/README.md` written with build + run + mounts + env vars reference
-- `entrypoint.sh` updated to warn when `ANSIBLE_VAULT_PASSWORD_FILE` is not set
-- `ANSIBLE_VAULT_PASSWORD_FILE` confirmed removed from Dockerfile default; passed explicitly at runtime
-- Provision run verified end-to-end: `ok=11` on localhost, `ok=23 changed=17` on mount-doom
+Iteration 5 in progress:
+- `docker/` directory renamed to `.docker/`
+- Dockerfile updated: pinned `ansible-core==2.17.14`, added `python3-venv`, ENTRYPOINT path corrected to `/ansible/.docker/entrypoint.sh`
+- `entrypoint.sh` expanded: now checks for SSH key and vault.yml presence in addition to vault password
+- `.docker/tests.yaml` added: container-structure-test specs for `ansible-playbook --version`, `hetzner.hcloud`, `ansible.posix`, `community.general`
+- `.github/workflows/docker-publish.yml` added: builds multi-platform image (`linux/amd64` + `linux/arm64`), pushes to `ghcr.io/badwinniepooh/ansible-runner`, signs with cosign, runs container-structure-test matrix on both architectures
+- Several fix commits stabilising the workflow (permissions, entrypoint path, test content)
 
 ## Immediate Next Step
 
-**Iteration 5 — CI/CD foundation (optional)**
-
-Or declare the docker-runner scope complete. Discuss with learner.
+Verify CI/CD pipeline passes end-to-end on GitHub Actions, then decide:
+- Declare Iteration 5 complete and docker-runner scope done, or
+- Continue with additional improvements (e.g. publish README badge, multi-stage build for size)
 
 ## Open Items / Decisions Pending
 

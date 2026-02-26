@@ -22,7 +22,7 @@ the host.
 Run from the **repo root**:
 
 ```bash
-docker build -t ansible-runner -f docker/Dockerfile .
+docker build -t ansible-runner -f .docker/Dockerfile .
 ```
 
 Rebuild whenever you change `requirements.yml` (collection dependencies) or the

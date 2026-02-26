@@ -4,9 +4,14 @@
 
 ```
 ansible/
-├── docker/
+├── .docker/
 │   ├── Dockerfile
-│   └── entrypoint.sh
+│   ├── entrypoint.sh
+│   ├── README.md
+│   └── tests.yaml
+├── .github/
+│   └── workflows/
+│       └── docker-publish.yml
 └── ... (rest of existing repo)
 ```
 
@@ -14,20 +19,36 @@ ansible/
 
 ```
 FROM ubuntu:22.04
-RUN apt-get update && apt-get install -y python3 python3-pip pipx git openssh-client
-RUN pipx install ansible-core
-RUN pipx inject ansible-core hcloud passlib
-RUN /root/.local/bin/ansible-galaxy collection install hetzner.hcloud
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip python3-venv pipx git openssh-client \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/root/.local/bin:$PATH"
+
+RUN pipx install ansible-core==2.17.14 \
+  && pipx inject ansible-core hcloud passlib
+
+COPY requirements.yml /tmp/requirements.yml
+RUN ansible-galaxy collection install -r /tmp/requirements.yml
+
 ENV ANSIBLE_CONFIG=/ansible/ansible.cfg
-ENV ANSIBLE_VAULT_PASSWORD_FILE=/vault_pass
 
 WORKDIR /ansible
 COPY . /ansible
 
-ENTRYPOINT ["docker/entrypoint.sh"]
+RUN chmod +x /ansible/.docker/entrypoint.sh
+ENTRYPOINT ["/ansible/.docker/entrypoint.sh"]
 ```
+
+Key changes from original pattern:
+- `ansible-core` version pinned for reproducible builds
+- `python3-venv` added (required by pipx on some Ubuntu versions)
+- `requirements.yml` copied first so collection layer is cached independently
+- `apt-get clean` included to reduce image size
+- ENTRYPOINT uses absolute path inside the container
 
 ## Entrypoint Pattern
 
@@ -80,7 +101,50 @@ docker run --rm \
 ## Build Pattern
 
 ```bash
-docker build -t ansible-runner -f docker/Dockerfile .
+docker build -t ansible-runner -f .docker/Dockerfile .
 ```
 
 Build context is always the repo root so `COPY . /ansible` captures everything.
+
+## CI/CD Workflow Pattern
+
+`.github/workflows/docker-publish.yml` — triggers on push to `main`, semver tags, PRs, weekly cron, and `workflow_dispatch`.
+
+```
+jobs:
+  build:
+    - Checkout repo
+    - Install cosign (non-PR only)
+    - Set up Docker Buildx
+    - Login to ghcr.io (non-PR only)
+    - Extract metadata (tags/labels)
+    - Build + push multi-platform image (linux/amd64, linux/arm64)
+      file: .docker/Dockerfile, context: .
+      push: skipped on PRs
+      cache: type=gha
+    - Sign image digest with cosign (non-PR only)
+
+  test:
+    needs: build
+    strategy.matrix: [ubuntu-24.04/amd64, ubuntu-24.04-arm/arm64]
+    - Checkout repo
+    - Login to ghcr.io
+    - docker pull ghcr.io/badwinniepooh/ansible-runner:latest
+    - Install container-structure-test
+    - Run: container-structure-test test --image ... --config .docker/tests.yaml
+```
+
+## Container-Structure-Test Pattern
+
+`.docker/tests.yaml` — validates the built image without running Ansible:
+
+```yaml
+schemaVersion: 2.0.0
+commandTests:
+  - name: "ansible-playbook is available"
+    command: "ansible-playbook"
+    args: [ "--version" ]
+    expectedOutput: [ "ansible-playbook \\[core 2\\.17\\." ]
+  - name: "hetzner.hcloud collection is installed"
+    ...
+```
