@@ -28,7 +28,7 @@
       "schedule": ["every weekend"]
     },
     {
-      "matchManagers": ["ansible-galaxy", "dockerfile", "custom.regex"],
+      "matchManagers": ["ansible-galaxy", "dockerfile", "pip_requirements", "custom.regex"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "non-major dependencies"
     },
