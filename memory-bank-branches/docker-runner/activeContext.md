@@ -6,23 +6,23 @@
 
 ## Session State
 
-Iterations 5 and 6 complete. Starting iteration 9 (pulled forward) — dynamic inventory.
+Iteration 6 committed (branch `feature/multi-stage-build`), not yet merged to `main`.
+Deprecation fix committed (branch `fix/ansible-deprecation-warnings`), not yet merged to `main`.
 
 Iteration 6 delivered:
-- `.docker/Dockerfile` converted to multi-stage build: `builder` stage installs all tooling; `runtime` stage copies only `/root/.local` and `/root/.ansible` — no compilers/pip/git in final image
+- Multi-stage Dockerfile: `builder` stage installs all tooling; `runtime` stage copies only `/root/.local` (pipx venv) and `/root/.ansible` (collections) — no compilers or build tools in final image
 - Docker section added to repo root `README.md`
 
-Also completed (branch `fix/ansible-deprecation-warnings`):
+Deprecation fix delivered (branch `fix/ansible-deprecation-warnings`):
 - `local_action` mapping syntax replaced with `delegate_to: localhost` + FQCN in `tasks/add-server-to-known-hosts.yml`
-- `ansible_python_interpreter: /usr/bin/python3` added to `group_vars/all/vars.yml` — silences interpreter auto-discovery warning
+- Silences both `DEPRECATION WARNING: Using a mapping for action` warnings ahead of ansible-core 2.23 removal
 
 ## Immediate Next Step
 
-Iteration 9: replace `inventories/hosts.ini` static inventory with the `hetzner.hcloud.hcloud` dynamic inventory plugin.
-- Remove `<PLACEHOLDER>` IP pattern and manual `hosts.ini` updates from provision/destroy workflow
-- Configure the plugin to discover servers by label or group matching existing Hetzner Cloud setup
-- Update `ansible.cfg` inventory path accordingly
-- Verify `provision.yml` and `destroy.yml` still work end-to-end
+Merge open branches to `main`, verify CI passes, then proceed with roadmap:
+- Iteration 7: CI status badge in `README.md`
+- Iteration 8: Verify Renovate custom regex manager for `ansible-core`
+- Iteration 9: Dynamic inventory via `hetzner.hcloud.hcloud` plugin
 
 ## Open Items / Decisions Pending
 
