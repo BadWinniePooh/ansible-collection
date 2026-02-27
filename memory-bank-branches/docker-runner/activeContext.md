@@ -6,27 +6,21 @@
 
 ## Session State
 
-Iteration 6 committed (branch `feature/multi-stage-build`), not yet merged to `main`.
-Deprecation fix committed (branch `fix/ansible-deprecation-warnings`), not yet merged to `main`.
+All iterations complete. The docker-runner memory branch is closed.
 
-Iteration 6 delivered:
-- Multi-stage Dockerfile: `builder` stage installs all tooling; `runtime` stage copies only `/root/.local` (pipx venv) and `/root/.ansible` (collections) — no compilers or build tools in final image
-- Docker section added to repo root `README.md`
-
-Deprecation fix delivered (branch `fix/ansible-deprecation-warnings`):
-- `local_action` mapping syntax replaced with `delegate_to: localhost` + FQCN in `tasks/add-server-to-known-hosts.yml`
-- Silences both `DEPRECATION WARNING: Using a mapping for action` warnings ahead of ansible-core 2.23 removal
+**Final state:**
+- Iterations 1–6, 9: done
+- Iteration 7 (CI badge): cancelled — decided not needed
+- Iteration 8 (Renovate ansible-core): done — regex manager verified correct in `renovate.json`
+- Open branches pending merge to main: `feature/dynamic-inventory`, `fix/hcloud-token-env-var`, `fix/ansible-deprecation-warnings`, `feature/multi-stage-build`
 
 ## Immediate Next Step
 
-Merge open branches to `main`, verify CI passes, then proceed with roadmap:
-- Iteration 7: CI status badge in `README.md`
-- Iteration 8: Verify Renovate custom regex manager for `ansible-core`
-- Iteration 9: Dynamic inventory via `hetzner.hcloud.hcloud` plugin
+None — work on this branch is complete.
 
 ## Open Items / Decisions Pending
 
-- None currently
+- None
 
 ## Git Notes
 

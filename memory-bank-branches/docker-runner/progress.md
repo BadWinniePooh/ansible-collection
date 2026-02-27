@@ -11,6 +11,9 @@
 | 4 | README / usage docs | `.docker/README.md`, entrypoint ANSIBLE_VAULT_PASSWORD_FILE check added | done |
 | 5 | CI/CD foundation | `.github/workflows/docker-publish.yml`, `.docker/tests.yaml`, multi-platform build, cosign signing, ubuntu:24.04 upgrade | done |
 | 6 | Image size optimisation | `.docker/Dockerfile` multi-stage build — builder + runtime stages | done |
+| 7 | CI status badge | decided not needed — discarded | cancelled |
+| 8 | Renovate for `ansible-core` | regex manager verified correct; live run confirms on next merge to main | done |
+| 9 | Dynamic inventory | `inventories/hcloud.yml`, `ansible.cfg`, provisioners updated | done |
 
 ## Key Concepts (docker-runner)
 
@@ -41,7 +44,13 @@
 - `pipx runpip <venv> <pip-args>` runs pip inside a specific pipx-managed venv without hardcoding venv paths
 - `container-structure-test` version regex in `tests.yaml` must be updated when `ansible-core` major/minor version changes
 - `local_action: { module: ... }` (mapping syntax) deprecated since ansible-core 2.20, removed in 2.23 — use `delegate_to: localhost` + FQCN (`ansible.builtin.shell`, `ansible.builtin.known_hosts`, etc.)
-- Static `hosts.ini` with `<PLACEHOLDER>` IP triggers three `[WARNING]: inventory` log lines on every run after deprovisioning — root cause: ini parser rejects the placeholder as invalid; fix is dynamic inventory (`hetzner.hcloud.hcloud` plugin, iteration 9)
+- Static `hosts.ini` with `<PLACEHOLDER>` IP triggers three `[WARNING]: inventory` log lines on every run after deprovisioning — ini parser rejects the placeholder as invalid; fix is dynamic inventory (`hetzner.hcloud.hcloud` plugin, iteration 9)
+- `interpreter_python = auto_silent` in `ansible.cfg` — localhost tasks use the pipx-venv Python (has `requests`/`hcloud`); remote hosts auto-discover `/usr/bin/python3` without a warning; replaces the earlier `ansible_python_interpreter` group_var approach which broke localhost module imports
+- `ansible.posix` collection emits a deprecation warning about `ansible.module_utils._text` import — this is inside the collection's own code, not fixable here; will be resolved by a future `ansible.posix` release; Renovate will open the PR automatically
+- `hetzner.hcloud.hcloud` dynamic inventory plugin replaces `hosts.ini`; token via `HCLOUD_TOKEN` env var (vault blob approach does not work — plugin runs before vault is decrypted); `filters: label_selector: platform=linux` constrains discovery; `groups: hcloud_type: true` + `mordor: true` ensure group_vars load correctly
+- `requests==2.32.3` added to `requirements.txt` — `hcloud` SDK 2.x dropped it as a transitive dep but `hetzner.hcloud` collection `module_utils` still imports it directly
+- `ansible.cfg` `interpreter_python = auto_silent` resolves both the interpreter discovery warning and the `requests` import error on localhost tasks (pipx venv Python is used for localhost; auto-discovered for remotes)
+- Multi-stage Dockerfile: `builder` installs build tools (pipx, git, pip) and runs `pipx install` + `ansible-galaxy`; `runtime` copies only `/root/.local` (venv + wrappers) and `/root/.ansible` (collections) from builder — final image contains no compilers, pip, or git
 - `container-structure-test` (Google) used to validate the built image against a YAML spec — runs inside CI, no Ansible install needed on the runner
 - GitHub Actions workflow: `build` job pushes to ghcr.io; `test` job runs on a matrix of `ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64)
 - cosign + sigstore Fulcio used to sign the pushed image digest — supply-chain security
@@ -53,10 +62,5 @@
 
 ## Remaining Roadmap
 
-| # | Topic | Notes |
-|---|---|---|
-| 6 | Image size optimisation | Multi-stage build — strip build tools and apt cache from final image; branch `feature/multi-stage-build` committed, not yet merged |
-| 7 | CI status badge | Add GitHub Actions workflow status badge to repo root `README.md` |
-| 8 | Renovate for `ansible-core` | Verify the custom regex manager in `renovate.json` correctly tracks `ansible-core` version in `.docker/Dockerfile` and opens PRs |
-| 9 | Dynamic inventory | Replace static `inventories/hosts.ini` with `hetzner.hcloud.hcloud` dynamic inventory plugin — eliminates `<PLACEHOLDER>` IP, removes three `[WARNING]: inventory` log lines on every run, and removes the need to manually update `hosts.ini` after provision/destroy |
+All planned iterations complete or cancelled. The docker-runner memory branch is closed.
 
