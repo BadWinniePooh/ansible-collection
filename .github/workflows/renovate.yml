@@ -13,10 +13,15 @@ on:
     # Renovate's own schedule in renovate.json acts as an additional filter.
     - cron: '0 4 * * 1'
   workflow_dispatch:
+  # React to checkbox ticks in the Dependency Dashboard issue.
+  issues:
+    types: [edited]
 
 jobs:
   renovate:
     runs-on: ubuntu-latest
+    # For issue edits, only run when it's the Dependency Dashboard issue.
+    if: github.event_name != 'issues' || contains(github.event.issue.title, 'Dependency Dashboard')
     permissions:
       contents: read
 
