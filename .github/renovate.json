@@ -7,6 +7,12 @@
     "every weekend"
   ],
   "timezone": "Europe/Berlin",
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "addLabels": ["security"]
+  },
+  "osvVulnerabilityAlerts": true,
   "ansible-galaxy": {
     "managerFilePatterns": [
       "/(^|/)requirements\\.yml$/"
@@ -52,7 +58,6 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "dependencyDashboardApproval": true,
       "addLabels": [
         "major-update"
       ]
