@@ -28,12 +28,11 @@ jobs:
         uses: renovatebot/github-action@v46.1.1
         with:
           configurationFile: .github/renovate.json
+          # Cache the Renovate Docker image between runs to avoid re-pulling it.
+          cache-image: true
         env:
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           # Use the token owner's identity as git author to avoid the Mend
           # default email (renovate@whitesourcesoftware.com) and unsigned commits.
           RENOVATE_GIT_AUTHOR: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          # Temporary: enable debug logging to diagnose platform-unknown-error.
-          # Remove once the issue is resolved.
-          LOG_LEVEL: debug
