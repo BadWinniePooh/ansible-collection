@@ -30,3 +30,7 @@ jobs:
           configurationFile: .github/renovate.json
         env:
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          # Use the token owner's identity as git author to avoid the Mend
+          # default email (renovate@whitesourcesoftware.com) and unsigned commits.
+          RENOVATE_GIT_AUTHOR: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
