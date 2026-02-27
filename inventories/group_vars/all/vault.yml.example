@@ -1,0 +1,26 @@
+---
+# Ansible Vault template — copy to vault.yml and encrypt with:
+#   ansible-vault encrypt inventories/group_vars/all/vault.yml
+#
+# Or create it interactively from scratch:
+#   ansible-vault create inventories/group_vars/all/vault.yml
+#
+# vault.yml is gitignored and must never be committed in plaintext.
+
+# Generic database password (placeholder — adapt to your needs)
+vault_db_password: "changeme"
+
+# Hetzner Cloud credentials
+vault_hetzner_secrets:
+  # API token from: Hetzner Cloud Console → Project → Security → API Tokens
+  api_token: "your-hetzner-api-token"
+  # Name of the SSH key registered in Hetzner Cloud Console → Security → SSH Keys
+  ssh_key:
+    name: "your-ssh-key-name"
+  # Password for the Ansible automation user (morgoth) on managed nodes
+  ansible_user:
+    password: "changeme"
+
+# Password for the desktop user (sauron)
+vault_sauron:
+  password: "changeme"
