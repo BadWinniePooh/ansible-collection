@@ -1,0 +1,32 @@
+name: Renovate
+
+# Replaces the Mend Renovate GitHub App.
+# Requires a secret named RENOVATE_TOKEN:
+#   - Classic PAT with 'repo' and 'workflow' scopes, OR
+#   - Fine-grained PAT with: Contents (R/W), Pull requests (R/W),
+#     Issues (R/W), Workflows (R/W), Metadata (R)
+# Add the secret at: Settings → Secrets and variables → Actions → New repository secret
+
+on:
+  schedule:
+    # Runs at 04:00 UTC on Monday (06:00 Europe/Berlin in winter).
+    # Renovate's own schedule in renovate.json acts as an additional filter.
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v41
+        with:
+          configurationFile: .github/renovate.json
+        env:
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
