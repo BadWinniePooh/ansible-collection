@@ -4,6 +4,8 @@
 ### Ansible ###
 *.retry
 *.ini
+# Vault file must never be committed in plaintext — use vault.yml.example as template
+inventories/group_vars/all/vault.yml
 
 ### direnv ###
 .direnv

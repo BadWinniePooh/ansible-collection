@@ -72,6 +72,7 @@ Topics build on each other in the following order:
   ```
   Co-authored-by: GitHub Copilot <copilot@github.com>
   ```
-- Commits are made to `main` during early learning; feature branches will be introduced when the topic is relevant
+- **All changes go on a feature branch** — direct commits to `main` are not allowed; changes reach `main` only via pull request
+- Branch names follow the pattern `type/short-description`, e.g. `feat/dynamic-inventory`, `fix/ssh-key-handling`
 - **You are responsible for `git push`** — I will only stage and commit locally
 - Git commands are always run directly in the active terminal session — never via `wsl --` invocation

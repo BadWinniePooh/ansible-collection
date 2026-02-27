@@ -47,21 +47,31 @@ export ANSIBLE_CONFIG=/mnt/c/Users/<you>/source/repos/private/ansible/ansible.cf
 
 ### 4. Create your vault file
 
-Sensitive values (API token, passwords, SSH keys) are encrypted with Ansible Vault. Create `inventories/group_vars/all/vault.yml`:
+Sensitive values (API token, passwords) are encrypted with Ansible Vault. `vault.yml` is gitignored and must never be committed in plaintext.
+
+Copy the provided template and fill in your values, then encrypt:
+
+```zsh
+cp inventories/group_vars/all/vault.yml.example inventories/group_vars/all/vault.yml
+# Edit vault.yml with your actual values, then:
+ansible-vault encrypt inventories/group_vars/all/vault.yml
+```
+
+Or create it interactively from scratch:
 
 ```zsh
 ansible-vault create inventories/group_vars/all/vault.yml
 ```
 
-Required vault variables:
+Required vault variables (see [`inventories/group_vars/all/vault.yml.example`](inventories/group_vars/all/vault.yml.example) for the full structure):
 
-| Variable | Description |
-|---|---|
-| `vault_db_password` | Database password |
-| `vault_my_ansible_user_password` | Password for the Ansible automation user (`morgoth`) |
-| `vault_my_ssh_public` | Dict with `name` and `key` for the Hetzner SSH key |
-| `vault_my_hetzner_api_token` | Hetzner Cloud API token |
-| `vault_sauron` | Dict with `password` for the desktop user |
+| Variable | Type | Description |
+|---|---|---|
+| `vault_db_password` | string | Database password |
+| `vault_hetzner_secrets.api_token` | string | Hetzner Cloud API token |
+| `vault_hetzner_secrets.ssh_key.name` | string | Name of the SSH key registered in Hetzner Cloud |
+| `vault_hetzner_secrets.ansible_user.password` | string | Password for the Ansible automation user (`morgoth`) |
+| `vault_sauron.password` | string | Password for the desktop user (`sauron`) |
 
 ---
 
