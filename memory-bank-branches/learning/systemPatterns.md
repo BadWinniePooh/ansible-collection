@@ -105,6 +105,6 @@ type(scope): short description
 
 Body explaining what and why (not how).
 
-Co-authored-by: GitHub Copilot <copilot@github.com>
+Co-authored-by: GitHub Copilot <175728472+Copilot@users.noreply.github.com>
 ```
 Types used: `feat`, `docs`, `chore`, `fix`

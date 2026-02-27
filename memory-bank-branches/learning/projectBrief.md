@@ -21,5 +21,5 @@ to real-world infrastructure automation on Hetzner Cloud.
 - Git commands run directly in the terminal — never via `wsl --` invocation
 - Learner is responsible for `git push`
 - Commit messages follow Conventional Commits with Co-authored-by footer:
-  `Co-authored-by: GitHub Copilot <copilot@github.com>`
+  `Co-authored-by: GitHub Copilot <175728472+Copilot@users.noreply.github.com>`
 - Full guidelines: `GUIDELINES.md` in repo root

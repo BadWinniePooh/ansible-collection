@@ -36,6 +36,6 @@ jobs:
         env:
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
-          # Use the token owner's identity as git author to avoid the Mend
-          # default email (renovate@whitesourcesoftware.com) and unsigned commits.
-          RENOVATE_GIT_AUTHOR: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          # Use Renovate's own bot identity as git author so commits and PRs
+          # are clearly attributed to the automation and not the token owner.
+          RENOVATE_GIT_AUTHOR: Renovate Bot <29139614+renovate[bot]@users.noreply.github.com>

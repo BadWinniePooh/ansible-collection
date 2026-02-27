@@ -70,7 +70,7 @@ Topics build on each other in the following order:
   Examples: `feat(inventory): add first static inventory file`, `docs(guidelines): initial project guidelines`
 - Each commit message includes a Co-Author footer:
   ```
-  Co-authored-by: GitHub Copilot <copilot@github.com>
+  Co-authored-by: GitHub Copilot <175728472+Copilot@users.noreply.github.com>
   ```
 - **All changes go on a feature branch** — direct commits to `main` are not allowed; changes reach `main` only via pull request
 - Branch names follow the pattern `type/short-description`, e.g. `feat/dynamic-inventory`, `fix/ssh-key-handling`
