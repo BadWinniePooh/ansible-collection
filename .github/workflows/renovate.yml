@@ -16,6 +16,9 @@ on:
   # React to checkbox ticks in the Dependency Dashboard issue.
   issues:
     types: [edited]
+  # Trigger when a pull request is merged
+  pull_request:
+    types: [closed]
 
 jobs:
   renovate:
