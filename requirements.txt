@@ -4,12 +4,12 @@
 #   pipx inject ansible-core -r requirements.txt
 
 # Hetzner Cloud Python SDK — required by the hetzner.hcloud collection
-hcloud==2.17.0
+hcloud==2.17.1
 
 # requests — required by hetzner.hcloud collection module_utils directly
 # (hcloud SDK 2.x no longer depends on requests internally, so it must be
 # listed explicitly here to ensure it is present in the pipx venv)
-requests==2.33.0
+requests==2.33.1
 
 # Password hashing support — required for the password_hash('sha512') Jinja2 filter
 passlib==1.7.4
