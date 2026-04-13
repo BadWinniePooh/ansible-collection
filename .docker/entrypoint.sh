@@ -3,14 +3,18 @@ set -euo pipefail
 
 version_check() {
   local current_version latest_version
-  current_version=$(cat /ansible/VERSION 2>/dev/null | tr -d '[:space:]') || return 0
+  current_version=$(tr -d '[:space:]' < /ansible/VERSION 2>/dev/null) || return 0
   [[ -z "$current_version" || "$current_version" == "dev" ]] && return 0
   latest_version=$(python3 -c "
 import urllib.request, json, sys
 try:
     req = urllib.request.Request(
         'https://api.github.com/repos/BadWinniePooh/ansible-collection/releases/latest',
-        headers={'Accept': 'application/vnd.github+json'}
+        headers={
+            'Accept': 'application/vnd.github+json',
+            'User-Agent': 'ansible-runner-update-check/1.0',
+            'X-GitHub-Api-Version': '2022-11-28',
+        }
     )
     with urllib.request.urlopen(req, timeout=3) as r:
         print(json.load(r)['tag_name'])
@@ -18,7 +22,10 @@ except Exception:
     sys.exit(1)
 " 2>/dev/null) || return 0
   [[ -z "$latest_version" ]] && return 0
-  if [[ "$current_version" != "$latest_version" ]]; then
+  # Normalise versions for comparison (strip leading 'v' if present)
+  local current_cmp="${current_version#v}"
+  local latest_cmp="${latest_version#v}"
+  if [[ "$current_cmp" != "$latest_cmp" ]]; then
     echo ""
     echo "*** Update available ***"
     echo "Current version : ${current_version}"

@@ -37,7 +37,7 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    python3 \
+    python3 \         # also required by entrypoint.sh's version check (urllib.request)
     openssh-client \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
@@ -53,8 +53,6 @@ ENV PATH="/root/.local/bin:$PATH"
 # Point Ansible at the baked-in config (no direnv needed in container)
 ENV ANSIBLE_CONFIG=/ansible/ansible.cfg
 
-ARG IMAGE_VERSION=dev
-
 WORKDIR /ansible
 
 # Copy the entire repo into the image
@@ -62,6 +60,9 @@ COPY . /ansible
 
 # Make entrypoint executable
 RUN chmod +x /ansible/.docker/entrypoint.sh
+
+# Declare ARG here so only this cheap layer is cache-busted when the version changes
+ARG IMAGE_VERSION=dev
 
 # Write the version string into the image (must come after COPY to avoid being overwritten)
 RUN echo "${IMAGE_VERSION}" > /ansible/VERSION

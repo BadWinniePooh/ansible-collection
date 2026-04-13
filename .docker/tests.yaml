@@ -20,4 +20,13 @@ commandTests:
     command: "ansible-galaxy"
     args: [ "collection", "list", "community.general" ]
     expectedOutput: [ "community.general" ]
-  
+
+  - name: "python3 is available at runtime (required by entrypoint.sh version check)"
+    command: "python3"
+    args: [ "--version" ]
+    expectedOutput: [ "Python 3\\." ]
+
+fileExistenceTests:
+  - name: "VERSION file exists"
+    path: "/ansible/VERSION"
+    shouldExist: true
