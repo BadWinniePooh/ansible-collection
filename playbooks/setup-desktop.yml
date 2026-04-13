@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Setup desktop environment
+  hosts: all
   tags: not-supported-on-vagrant-docker
   become: true
 
@@ -17,18 +18,18 @@
   handlers:
     # TODO: smell - cleanup apt cache is duplicate in several playbooks
     - name: Cleanup apt cache
-      apt:
-        autoremove: yes
-        autoclean: yes
+      ansible.builtin.apt:
+        autoremove: true
+        autoclean: true
 
     - name: Restart XRDP
-      service:
+      ansible.builtin.service:
         name: xrdp
         state: restarted
 
   tasks:
     - name: Install console utilities
-      apt:
+      ansible.builtin.apt:
         name:
           - curl
           - tree
@@ -37,52 +38,136 @@
       notify: Cleanup apt cache
 
     - name: Install minimal GNOME desktop
-      apt:
+      ansible.builtin.apt:
         name:
           - dbus-x11
-#          - ubuntu-desktop-minimal
           - python3-full
         state: present
       notify: Cleanup apt cache
 
     - name: Install XFCE extras and developer tools
-      apt:
+      ansible.builtin.apt:
         name:
           - build-essential
-          - gh
           - libsecret-tools
           - seahorse
         state: present
       notify: Cleanup apt cache
 
     - name: Install .NET SDK
-      apt:
+      ansible.builtin.apt:
         name:
           - dotnet-sdk-8.0
           - dotnet-sdk-10.0
         state: present
       notify: Cleanup apt cache
 
-    - name: Install fnm (Fast Node Manager) for {{ desktop_user_names | join(', ') }}
+    - name: Install Firefox
+      ansible.builtin.apt:
+        name: firefox
+        state: present
+      notify: Cleanup apt cache
+
+    - name: Remove apt-installed gh (migrating to Homebrew)
+      ansible.builtin.apt:
+        name: gh
+        state: absent
+      notify: Cleanup apt cache
+
+    - name: Remove GitHub CLI apt source list
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/github-cli.list
+        state: absent
+
+    - name: Remove GitHub CLI apt keyring
+      ansible.builtin.file:
+        path: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+        state: absent
+
+    # Security: fetched over HTTPS; no additional checksum verification per project policy
+    # Installs to the system-wide prefix /home/linuxbrew/.linuxbrew.
+    # Must NOT run as root — the installer uses sudo internally. become: false overrides
+    # the play-level become: true so the task runs as the Ansible connection user (who has sudo).
+    - name: Install Homebrew
       ansible.builtin.shell:
-        cmd: curl -fsSL https://fnm.vercel.app/install | bash
-        creates: "/home/{{ item }}/.local/share/fnm/fnm"
-      become_user: "{{ item }}"
+        cmd: NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        creates: /home/linuxbrew/.linuxbrew/bin/brew
+      become: false
+
+    - name: Configure Homebrew PATH for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item }}/.bashrc"
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        regexp: 'brew shellenv'
+        create: true
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0644'
+        state: present
+      loop: "{{ desktop_user_names }}"
+
+    - name: Install gh via Homebrew
+      ansible.builtin.shell:
+        cmd: /home/linuxbrew/.linuxbrew/bin/brew install gh
+        creates: /home/linuxbrew/.linuxbrew/bin/gh
+      become: false
+
+    - name: Install fnm via Homebrew
+      ansible.builtin.shell:
+        cmd: /home/linuxbrew/.linuxbrew/bin/brew install fnm
+        creates: /home/linuxbrew/.linuxbrew/bin/fnm
+      become: false
+
+    - name: Configure fnm in shell profile for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item }}/.bashrc"
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/fnm env --use-on-cd)"'
+        regexp: 'fnm env'
+        create: true
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0644'
+        state: present
       loop: "{{ desktop_user_names }}"
 
     - name: Install Node 24 via fnm for {{ desktop_user_names | join(', ') }}
       ansible.builtin.shell:
-        cmd: ~/.local/share/fnm/fnm install 24
-      register: fnm_node_install
-      changed_when: "'Downloading' in fnm_node_install.stdout"
+        cmd: /home/linuxbrew/.linuxbrew/bin/fnm install 24
+        creates: "/home/{{ item }}/.local/share/fnm/node-versions/v24"
       become_user: "{{ item }}"
+      environment:
+        HOME: "/home/{{ item }}"
+      loop: "{{ desktop_user_names }}"
+
+    - name: Set Node 24 as fnm default for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.shell:
+        cmd: /home/linuxbrew/.linuxbrew/bin/fnm default 24
+      become_user: "{{ item }}"
+      environment:
+        HOME: "/home/{{ item }}"
+      loop: "{{ desktop_user_names }}"
+      register: fnm_default
+      changed_when: fnm_default.rc == 0
+
+    - name: Configure npm prefix for {{ desktop_user_names | join(', ') }}
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item }}/.npmrc"
+        line: 'prefix=~/.local'
+        regexp: '^prefix='
+        create: true
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0644'
+        state: present
       loop: "{{ desktop_user_names }}"
 
     - name: Install Claude Code CLI for {{ desktop_user_names | join(', ') }}
       ansible.builtin.shell:
-        cmd: curl -fsSL https://claude.ai/install.sh | bash
+        cmd: eval "$(/home/linuxbrew/.linuxbrew/bin/fnm env --shell bash)" && /home/linuxbrew/.linuxbrew/bin/fnm use 24 && npm install -g @anthropic-ai/claude-code
         creates: "/home/{{ item }}/.local/bin/claude"
       become_user: "{{ item }}"
+      environment:
+        HOME: "/home/{{ item }}"
       loop: "{{ desktop_user_names }}"
 
     - name: Install VS Code
@@ -92,13 +177,13 @@
         state: present
 
     - name: Remove GNOME remote desktop
-      apt:
+      ansible.builtin.apt:
         name: gnome-remote-desktop
         state: absent
       notify: Cleanup apt cache
-    
+
     - name: Install XFCE desktop and XRDP
-      apt:
+      ansible.builtin.apt:
         name:
           - xfce4
           - xfce4-goodies
@@ -107,26 +192,27 @@
       notify: Cleanup apt cache
 
     - name: Start and enable XRDP
-      service:
+      ansible.builtin.service:
         name: xrdp
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Remove light-locker
-      apt:
+      ansible.builtin.apt:
         name: light-locker
         state: absent
       notify: Cleanup apt cache
 
+    # NOTE: Notify Restart XRDP must run after XRDP is installed and started (see Install XFCE desktop and XRDP task above)
     - name: Enable XFCE session for {{ desktop_user_names | join(', ') }}
-      lineinfile:
-        dest: "/home/{{ item }}/.xsession"
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item }}/.xsession"
         regexp: '^.*'
         line: xfce4-session
-        create: yes
+        create: true
         owner: "{{ item }}"
         group: "{{ item }}"
-        mode: 0644
+        mode: '0644'
         state: present
       loop: "{{ desktop_user_names }}"
       notify: Restart XRDP
