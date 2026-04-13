@@ -36,8 +36,9 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# python3 is also required by entrypoint.sh's version check (urllib.request)
 RUN apt-get update && apt-get install -y \
-    python3 \         # also required by entrypoint.sh's version check (urllib.request)
+    python3 \
     openssh-client \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
