@@ -1,6 +1,35 @@
 #!/bin/bash
 set -euo pipefail
 
+version_check() {
+  local current_version latest_version
+  current_version=$(cat /ansible/VERSION 2>/dev/null | tr -d '[:space:]') || return 0
+  [[ -z "$current_version" || "$current_version" == "dev" ]] && return 0
+  latest_version=$(python3 -c "
+import urllib.request, json, sys
+try:
+    req = urllib.request.Request(
+        'https://api.github.com/repos/BadWinniePooh/ansible-collection/releases/latest',
+        headers={'Accept': 'application/vnd.github+json'}
+    )
+    with urllib.request.urlopen(req, timeout=3) as r:
+        print(json.load(r)['tag_name'])
+except Exception:
+    sys.exit(1)
+" 2>/dev/null) || return 0
+  [[ -z "$latest_version" ]] && return 0
+  if [[ "$current_version" != "$latest_version" ]]; then
+    echo ""
+    echo "*** Update available ***"
+    echo "Current version : ${current_version}"
+    echo "Latest version  : ${latest_version}"
+    echo "Pull the latest image: docker pull ghcr.io/badwinniepooh/ansible-runner:${latest_version}"
+    echo ""
+  fi
+}
+
+version_check
+
 VAULT_FILE="/ansible/inventories/group_vars/all/vault.yml"
 SSH_KEY="/root/.ssh/hetzner_ansible"
 VAULT_PASS="/vault_pass"

@@ -53,6 +53,8 @@ ENV PATH="/root/.local/bin:$PATH"
 # Point Ansible at the baked-in config (no direnv needed in container)
 ENV ANSIBLE_CONFIG=/ansible/ansible.cfg
 
+ARG IMAGE_VERSION=dev
+
 WORKDIR /ansible
 
 # Copy the entire repo into the image
@@ -60,5 +62,8 @@ COPY . /ansible
 
 # Make entrypoint executable
 RUN chmod +x /ansible/.docker/entrypoint.sh
+
+# Write the version string into the image (must come after COPY to avoid being overwritten)
+RUN echo "${IMAGE_VERSION}" > /ansible/VERSION
 
 ENTRYPOINT ["/ansible/.docker/entrypoint.sh"]
