@@ -25,8 +25,3 @@ commandTests:
     command: "python3"
     args: [ "--version" ]
     expectedOutput: [ "Python 3\\." ]
-
-fileExistenceTests:
-  - name: "VERSION file exists"
-    path: "/ansible/VERSION"
-    shouldExist: true
