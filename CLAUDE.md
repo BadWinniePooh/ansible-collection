@@ -1,10 +1,10 @@
 # ansible-collection Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-10
+Auto-generated from all feature plans. Last updated: 2026-04-13
 
 ## Active Technologies
 
-- YAML (Ansible playbook), targeting Ubuntu 24.04 LTS (Hetzner Cloud) + `ansible.builtin.apt`, `ansible.builtin.shell`, `ansible.builtin.lineinfile`, `community.general.snap` — all already used in the repo (001-brew-package-manager-consolidation)
+- Bash (entrypoint), Dockerfile, YAML (GitHub Actions), Python3 (stdlib inline call) + Python3 urllib (already present in runtime image), GitHub Releases API (unauthenticated) (002-docker-image-update-notification)
 
 ## Project Structure
 
@@ -15,15 +15,15 @@ tests/
 
 ## Commands
 
-# Add commands for YAML (Ansible playbook), targeting Ubuntu 24.04 LTS (Hetzner Cloud)
+cd src && pytest && ruff check .
 
 ## Code Style
 
-YAML (Ansible playbook), targeting Ubuntu 24.04 LTS (Hetzner Cloud): Follow standard conventions
+Bash (entrypoint), Dockerfile, YAML (GitHub Actions), Python3 (stdlib inline call): Follow standard conventions
 
 ## Recent Changes
 
-- 001-brew-package-manager-consolidation: Added YAML (Ansible playbook), targeting Ubuntu 24.04 LTS (Hetzner Cloud) + `ansible.builtin.apt`, `ansible.builtin.shell`, `ansible.builtin.lineinfile`, `community.general.snap` — all already used in the repo
+- 002-docker-image-update-notification: Added Bash (entrypoint), Dockerfile, YAML (GitHub Actions), Python3 (stdlib inline call) + Python3 urllib (already present in runtime image), GitHub Releases API (unauthenticated)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

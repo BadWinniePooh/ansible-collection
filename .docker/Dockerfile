@@ -36,6 +36,7 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# python3 is also required by entrypoint.sh's version check (urllib.request)
 RUN apt-get update && apt-get install -y \
     python3 \
     openssh-client \
@@ -60,5 +61,11 @@ COPY . /ansible
 
 # Make entrypoint executable
 RUN chmod +x /ansible/.docker/entrypoint.sh
+
+# Declare ARG here so only this cheap layer is cache-busted when the version changes
+ARG IMAGE_VERSION=dev
+
+# Write the version string into the image (must come after COPY to avoid being overwritten)
+RUN echo "${IMAGE_VERSION}" > /ansible/VERSION
 
 ENTRYPOINT ["/ansible/.docker/entrypoint.sh"]

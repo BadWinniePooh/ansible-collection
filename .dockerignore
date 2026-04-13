@@ -13,6 +13,9 @@ Dockerfile
 # Ansible Vault secrets — must be mounted at runtime, never baked in
 **/vault.yml
 
+# Version file — written at build time via IMAGE_VERSION build ARG; exclude host copy
+VERSION
+
 # Local environment config (direnv) — container uses ENV vars directly
 .envrc
 
