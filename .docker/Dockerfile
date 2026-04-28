@@ -1,7 +1,7 @@
 # ── Build stage ───────────────────────────────────────────────────────────────
 # Installs all build-time tooling. Nothing from this stage ends up in the final
 # image except the explicit COPY --from=builder lines below.
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:26.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -32,7 +32,7 @@ RUN ansible-galaxy collection install -r /tmp/requirements.yml
 # ── Runtime stage ─────────────────────────────────────────────────────────────
 # Minimal image: only Python (needed to run the pipx venv) and openssh-client.
 # No compilers, no pip, no pipx, no git — build tools stay in the builder stage.
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
