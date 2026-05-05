@@ -1,7 +1,7 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: (none) → 1.0.0
+Version change: (none) → 1.0.1
 Added sections: Core Principles, Infrastructure Requirements, Development Workflow, Governance
 Removed sections: none (initial fill)
 Templates requiring updates:
@@ -39,12 +39,12 @@ in `.gitignore`. Vault-encrypted variables MUST be prefixed `vault_`. Plaintext 
 MUST reference vault variables (double-variable pattern) — never inline secrets directly.
 Committing unencrypted vault content is a blocking violation requiring immediate remediation.
 
-### IV. Docker-First Local Testing
+### IV. Docker-First Local Testing (OPTIONAL)
 
-All new roles and playbooks MUST be testable locally against a Docker container target before
-any deployment to a cloud provider. Docker MUST be the default `provider` value for development
-and CI. A Docker-based test run MUST complete successfully before a Hetzner Cloud deployment is
-considered valid for review. Docker test targets MUST mirror the OS family and init system of
+All new roles and playbooks SHOULD be testable locally against a Docker container target before
+any deployment to a cloud provider. Docker SHOULD be the default `provider` value for development
+and CI. A Docker-based test run SHOULD complete successfully before a Hetzner Cloud deployment is
+considered valid for review. Docker test targets SHOULD mirror the OS family and init system of
 the production target where feasible.
 
 ### V. Declarative Configuration
