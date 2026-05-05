@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **I. Provider Abstraction** — Does this feature confine provider-specific logic to `provisioners/<provider>-*` files? No cross-provider leakage into shared roles/playbooks?
+- [ ] **II. Idempotent Playbooks** — Are all new tasks idempotent? Shell/command tasks have `changed_when`/`creates` guards?
+- [ ] **III. Vault-Only Secrets** — Zero plaintext secrets in committed files? Vault variables follow `vault_` prefix + double-variable pattern?
+- [ ] **IV. Docker-First Testing** — Is there a Docker provider path? Can the full provision→configure→destroy cycle run against Docker before Hetzner?
+- [ ] **V. Declarative Configuration** — All state in YAML/group_vars? No hardcoded env-specific values in playbook files?
 
 ## Project Structure
 
