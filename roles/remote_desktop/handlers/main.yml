@@ -1,0 +1,10 @@
+---
+- name: Cleanup apt cache
+  ansible.builtin.apt:
+    autoremove: true
+    autoclean: true
+
+- name: Restart XRDP
+  ansible.builtin.service:
+    name: xrdp
+    state: restarted

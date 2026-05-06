@@ -1,0 +1,10 @@
+---
+- name: Install Claude Code CLI for desktop users
+  ansible.builtin.shell:
+    cmd: eval "$(/home/linuxbrew/.linuxbrew/bin/fnm env --shell bash)" && /home/linuxbrew/.linuxbrew/bin/fnm use 24 && npm install -g @anthropic-ai/claude-code
+    creates: "/home/{{ item }}/.local/bin/claude"
+  become: true
+  become_user: "{{ item }}"
+  environment:
+    HOME: "/home/{{ item }}"
+  loop: "{{ desktop_user_names }}"

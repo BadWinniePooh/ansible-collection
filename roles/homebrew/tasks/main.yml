@@ -1,0 +1,21 @@
+---
+# Security: fetched over HTTPS; no additional checksum verification per project policy.
+# Must NOT run as root — the installer uses sudo internally. become: false overrides
+# the play-level become: true so the task runs as the Ansible connection user (who has sudo).
+- name: Install Homebrew
+  ansible.builtin.shell:
+    cmd: NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    creates: /home/linuxbrew/.linuxbrew/bin/brew
+  become: false
+
+- name: Configure Homebrew PATH for desktop users
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item }}/.bashrc"
+    line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+    regexp: 'brew shellenv'
+    create: true
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '0644'
+    state: present
+  loop: "{{ desktop_user_names }}"

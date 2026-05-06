@@ -1,4 +1,20 @@
 ---
-- import_playbook: ../playbooks/setup-users.yml
+- name: Configure Linux desktop environment - Setup users
+  import_playbook: ../playbooks/setup-users.yml
 
-- import_playbook: ../playbooks/setup-desktop.yml
+- name: Configure Linux desktop environment
+  hosts: all
+  become: true
+
+  vars:
+    ansible_user: "{{ my_hetzner_config.ansible_user.name }}"
+    desktop_user_names: "{{ desktop_users | map(attribute='name') | list }}"
+
+  vars_files:
+    - "vars/{{ provider }}-{{ platform }}.yml"
+
+  tasks:
+    - name: Run desktop roles
+      ansible.builtin.include_role:
+        name: "{{ item }}"
+      loop: "{{ active_roles }}"

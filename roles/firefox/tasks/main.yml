@@ -1,0 +1,6 @@
+---
+- name: Install Firefox
+  ansible.builtin.apt:
+    name: firefox
+    state: present
+  notify: Cleanup apt cache

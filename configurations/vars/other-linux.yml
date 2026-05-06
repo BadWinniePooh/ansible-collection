@@ -1,0 +1,8 @@
+---
+# Trimmed role set for non-Hetzner Linux targets.
+# Add or remove role names to customise the provisioned software stack.
+# See configurations/vars/hetzner-linux.yml for the full reference set.
+active_roles:
+  - base_packages
+  - homebrew
+  - github_cli

@@ -1,0 +1,5 @@
+---
+- name: Cleanup apt cache
+  ansible.builtin.apt:
+    autoremove: true
+    autoclean: true
