@@ -1,0 +1,6 @@
+---
+- name: Install gh via Homebrew
+  ansible.builtin.command:
+    cmd: /home/linuxbrew/.linuxbrew/bin/brew install gh
+    creates: /home/linuxbrew/.linuxbrew/bin/gh
+  become: false

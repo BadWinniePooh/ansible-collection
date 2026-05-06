@@ -1,0 +1,66 @@
+---
+- name: Remove apt-installed gh (migrating to Homebrew)
+  ansible.builtin.apt:
+    name: gh
+    state: absent
+  notify: Cleanup apt cache
+  tags: not-supported-on-vagrant-docker
+
+- name: Remove GitHub CLI apt source list
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/github-cli.list
+    state: absent
+  tags: not-supported-on-vagrant-docker
+
+- name: Remove GitHub CLI apt keyring
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    state: absent
+  tags: not-supported-on-vagrant-docker
+
+- name: Remove GNOME remote desktop
+  ansible.builtin.apt:
+    name: gnome-remote-desktop
+    state: absent
+  notify: Cleanup apt cache
+  tags: not-supported-on-vagrant-docker
+
+- name: Install XFCE desktop and XRDP
+  ansible.builtin.apt:
+    name:
+      - dbus-x11
+      - xfce4
+      - xfce4-goodies
+      - xrdp
+    state: present
+  notify: Cleanup apt cache
+  tags: not-supported-on-vagrant-docker
+
+- name: Start and enable XRDP
+  ansible.builtin.service:
+    name: xrdp
+    state: started
+    enabled: true
+  tags: not-supported-on-vagrant-docker
+
+- name: Remove light-locker
+  ansible.builtin.apt:
+    name: light-locker
+    state: absent
+  notify: Cleanup apt cache
+  tags: not-supported-on-vagrant-docker
+
+# NOTE: Notify Restart XRDP must run after XRDP is installed and started (see Install XFCE desktop and XRDP task above)
+- name: Enable XFCE session for desktop users
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item }}/.xsession"
+    regexp: '^.*'
+    line: xfce4-session
+    create: true
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '0644'
+    state: present
+  loop: "{{ desktop_user_names }}"
+  notify: Restart XRDP
+  tags: not-supported-on-vagrant-docker

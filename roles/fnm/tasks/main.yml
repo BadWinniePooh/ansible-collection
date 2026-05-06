@@ -1,0 +1,51 @@
+---
+- name: Install fnm via Homebrew
+  ansible.builtin.command:
+    cmd: /home/linuxbrew/.linuxbrew/bin/brew install fnm
+    creates: /home/linuxbrew/.linuxbrew/bin/fnm
+  become: false
+
+- name: Configure fnm in shell profile for desktop users
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item }}/.bashrc"
+    line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/fnm env --use-on-cd)"'
+    regexp: 'fnm env'
+    create: true
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '0644'
+    state: present
+  loop: "{{ desktop_user_names }}"
+
+- name: Install Node 24 via fnm for desktop users
+  ansible.builtin.command:
+    cmd: /home/linuxbrew/.linuxbrew/bin/fnm install 24
+    creates: "/home/{{ item }}/.local/share/fnm/node-versions/v24"
+  become: true
+  become_user: "{{ item }}"
+  environment:
+    HOME: "/home/{{ item }}"
+  loop: "{{ desktop_user_names }}"
+
+- name: Set Node 24 as fnm default for desktop users
+  ansible.builtin.command:
+    cmd: /home/linuxbrew/.linuxbrew/bin/fnm default 24
+  become: true
+  become_user: "{{ item }}"
+  environment:
+    HOME: "/home/{{ item }}"
+  loop: "{{ desktop_user_names }}"
+  register: fnm_default
+  changed_when: fnm_default.rc == 0
+
+- name: Configure npm prefix for desktop users
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item }}/.npmrc"
+    line: 'prefix=~/.local'
+    regexp: '^prefix='
+    create: true
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: '0644'
+    state: present
+  loop: "{{ desktop_user_names }}"

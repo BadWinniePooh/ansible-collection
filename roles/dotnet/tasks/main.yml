@@ -1,0 +1,8 @@
+---
+- name: Install .NET SDK
+  ansible.builtin.apt:
+    name:
+      - dotnet-sdk-8.0
+      - dotnet-sdk-10.0
+    state: present
+  notify: Cleanup apt cache

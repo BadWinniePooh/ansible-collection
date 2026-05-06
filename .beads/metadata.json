@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "ansible_collection",
+  "project_id": "6e4147ef-4721-4605-9c0b-4243b9f8038b"
+}

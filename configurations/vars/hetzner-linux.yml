@@ -1,0 +1,11 @@
+---
+active_roles:
+  - base_packages
+  - dotnet
+  - firefox
+  - homebrew
+  - github_cli
+  - fnm
+  - claude_code
+  - remote_desktop
+  - vscode
