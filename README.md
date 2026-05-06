@@ -79,11 +79,21 @@ Required vault variables (see [`inventories/group_vars/all/vault.yml.example`](i
 
 ### Provision + configure
 
-```zsh
-ansible-playbook ./provision.yml --extra-vars "provider=hetzner platform=linux" --ask-vault-pass
-```
+```bash
+# Build the runner image locally
+docker build -t ansible-runner -f .docker/Dockerfile .
 
-This provisions a Hetzner VM (`provisioners/hetzner-linux-up.yml`) and then configures it (`configurations/configure-linux.yml`).
+# Run full provisioning
+docker run --rm \
+  -e PLAYBOOK=provision.yml \
+  -e HCLOUD_TOKEN=<your-hetzner-api-token> \
+  -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
+  -v ~/vault.password:/vault_pass:ro \
+  -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
+  -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
+  ansible-runner \
+  --extra-vars "provider=hetzner platform=linux"
+```
 
 ### Deprovision
 
@@ -117,7 +127,7 @@ docker run --rm \
   -v ~/vault.password:/vault_pass:ro \
   -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
   -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
-  ghcr.io/badwinniepooh/ansible-runner:latest \
+  ansible-runner \
   --extra-vars "provider=hetzner platform=linux"
 ```
 

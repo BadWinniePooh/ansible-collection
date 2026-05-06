@@ -26,6 +26,23 @@ Bash (entrypoint), Dockerfile, YAML (GitHub Actions), Python3 (stdlib inline cal
 - 002-docker-image-update-notification: Added Bash (entrypoint), Dockerfile, YAML (GitHub Actions), Python3 (stdlib inline call) + Python3 urllib (already present in runtime image), GitHub Releases API (unauthenticated)
 
 <!-- MANUAL ADDITIONS START -->
+## Provisioning Test
+
+```bash
+# Build image locally
+docker build -t ansible-runner -f .docker/Dockerfile .
+
+# Run full provisioning
+docker run --rm \
+  -e PLAYBOOK=provision.yml \
+  -e HCLOUD_TOKEN=<your-hetzner-api-token> \
+  -v ./inventories/group_vars/all/vault.yml:/ansible/inventories/group_vars/all/vault.yml:ro \
+  -v ~/vault.password:/vault_pass:ro \
+  -v ~/.ssh/hetzner_ansible:/root/.ssh/hetzner_ansible:ro \
+  -v ~/.ssh/hetzner_ansible.pub:/root/.ssh/hetzner_ansible.pub:ro \
+  ansible-runner \
+  --extra-vars "provider=hetzner platform=linux"
+```
 <!-- MANUAL ADDITIONS END -->
 
 
